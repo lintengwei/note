@@ -11,6 +11,7 @@
 ## npm 更新
 
 > npm install npm@latest -g
+> npm install npm@next -g
 
 ## 包管理
 
@@ -20,6 +21,8 @@
   - npm init --scope=username
 - 如果发布包都在某个命名空间下
   - npm config set scope=username
+
+### 包的版本规则
 
 ## cli
 
