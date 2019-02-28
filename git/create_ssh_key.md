@@ -14,7 +14,7 @@ ls -al ~/.ssh
 ## 新建 ssh 文件
 
 1. 打开 Git Bash 客户端
-2. ssh-keygen -t rsa -b 4096 -C "253357669@qq.com"
+2. ssh-keygen -t rsa -b 4096 -C "xxxxx@qq.com"
 
 ## 测试是否能连接到 github
 
