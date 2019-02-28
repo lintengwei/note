@@ -1,0 +1,31 @@
+.notice {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  max-width: 80%;
+  white-space: wrap;
+  transform: translate(-50%, -50%);
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  line-height: 2;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+.info {
+  color: white;
+}
+
+.warn {
+  color: lightsalmon;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: lightgreen;
+}
