@@ -57,8 +57,8 @@ matchPath as the return value
 ```javascript
 getUserConfirmation = (message, callback) => {
   //  ...重写方法 返回true 可以跳转，返回false，不需跳转
-  return callback(true); // 允许跳转
-};
+  return callback(true) // 允许跳转
+}
 ```
 
 ## 切换路由使用动画
@@ -151,12 +151,13 @@ getUserConfirmation = (message, callback) => {
 ```
 
 ```jsx
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-<div className="Body">
-  <Link to="/user">user</Link>
-  <Link to="/order">order</Link>
-  <Link to="/">index</Link>
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
+
+;<div className='Body'>
+  <Link to='/user'>user</Link>
+  <Link to='/order'>order</Link>
+  <Link to='/'>index</Link>
   <Route
     // 必须要用【render】，并且把【location】注入进去？
     render={({ location }) => {
@@ -166,19 +167,19 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
             //  必须要有【key】来阻止【key】复用组件
             key={location.key}
             timeout={1000}
-            classNames="page page-rtl"
+            classNames='page page-rtl'
           >
             <Switch
               // 必须要有【location】？
               location={location}
             >
-              <Route exact path="/order" component={Order} />
-              <Route exact path="/" component={Index} />
+              <Route exact path='/order' component={Order} />
+              <Route exact path='/' component={Index} />
             </Switch>
           </CSSTransition>
         </TransitionGroup>
-      );
+      )
     }}
   />
-</div>;
+</div>
 ```

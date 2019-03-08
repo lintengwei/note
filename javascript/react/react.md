@@ -23,7 +23,7 @@
 ## 事件绑定
 
 > 默认组件方法不绑定 this，方法里面访问 this 为 undefined，并且如果需要传递参数，则事件对象作为最后一个参数传给方法
-> react 内部使用的是事件池，如果退出当前事件的回调，事件对象会被放回事件池，如果外部对象持有事件对象的引用，可能会出现补课预支的问题，如果确实需要引用事件对象，可以调用事件对象的 persist()方法让事件对象脱离事件池。
+> react 内部使用的是事件池，如果退出当前事件的回调，事件对象会被放回事件池，如果外部对象持有事件对象的引用，可能会出现不可预知的问题，如果确实需要引用事件对象，可以调用事件对象的 persist()方法让事件对象脱离事件池。
 
 ```javascript
 //  in render func
@@ -51,7 +51,8 @@ constructor(props){
   this.testChange=this.testChange.bind(this)
 }
 //  属性初始化器语法
-testChange=()=>{
+testChange=(e)=>{
+  console.log(e)
   console.log(this)
 }
 
@@ -97,12 +98,12 @@ function InputItem(props){
 > 默认父子组件数据传递的方式是采用皮 props 的方式，如果需要跨越多层数据传递，则可以使用 Context 上下文。当应用规模较小的时候，app 层级的组件可以作为数据中心使用。
 
 ```javascript
-import React from 'react';
+import React from 'react'
 
 //  数据上下文 通过 Context.Provider传递数据 Context.Consumer获取数据
-const DataContext = React.createContext();
+const DataContext = React.createContext()
 //  数据中心
-const appData = {};
+const appData = {}
 //  如何更新的问题???
 
 class App extends React.Component {
@@ -111,7 +112,7 @@ class App extends React.Component {
       <DataContext.Provider value={appData}>
         <ChildCom />
       </DataContext.Provider>
-    );
+    )
   }
 }
 
@@ -122,7 +123,7 @@ function ChildCom(props) {
         //  data为appData
       }}
     </DataContext.Consumer>
-  );
+  )
 }
 ```
 

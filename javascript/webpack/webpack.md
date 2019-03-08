@@ -56,6 +56,10 @@ module.exports = {
 
 其他文件的解析
 
+==tip==
+
+1. 模块的解析规则是从右到左解析的，所以类似 css 的预处理器，需要放在最右边，最先解析
+
 ```javascript
 module.exports = {
   module: {
@@ -83,9 +87,56 @@ module.exports = {
 };
 ```
 
-==tip==
+> externals
 
-1. 模块的解析规则是从右到左解析的，所以类似 css 的预处理器，需要放在最右边，最先解析
+```javascript
+module.exports = {
+  externals: {
+    lodash: {
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      root: '_'
+    }
+  }
+}
+```
+
+> optimization
+
+```javascript
+module.exports = {
+  //  ...
+  optimization: {
+    splitChunks: {
+      chunks: 'async', //  async initial all
+      minSize: 30000, //  文件大小至少为多少才会分离，默认３０kb。优先级大于【minChunks】
+      minChunks: 1, // 至少被几个模块依赖才会进行分离
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      automaticNameDelimiter: '~',
+      name: true, //  是否自动生成文件名？retrun true,自动生成。如果为字符串则以该字符串为文件名
+      cacheGroups: {
+        //  把大模块分离成更小的模块
+        //  默认只会把node_module里面的模块进行分离。
+        //  如果需要把其他自定义的模块进行分离如何操作？？？
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          name: 'lib'
+        },
+        utils: {
+          minChunks: 2,
+          test: /[\\/]utils[\\/]/, //  把utils下面的文件统一打包到utils.[chunkhash].js文件里
+          priority: -20,
+          reuseExistingChunk: true,
+          name: 'utils'
+        }
+      }
+    }
+  }
+}
+```
 
 ## 开发环境的配置需求
 
@@ -149,7 +200,10 @@ module.exports = {
 当多个入口有相同的引用的时候，webpack 的默认行为是每个入口文件都会把依赖打包，这对于服务来说是多余的。通过配置相关参数可以修改这种默认行为。
 [options](https://webpack.docschina.org/plugins/split-chunks-plugin/).　【split-chunks-plugin】应该也是插件行为的，为何不在 plugins 里面进行配置。
 
-> 为何只能分离 node_module 内置的模块，自定义的模块如何分离？
+- splitChunks.chunks
+  - all
+  - async
+  - initial
 
 ```javascript
 //  新增配置项可以修改默认行为

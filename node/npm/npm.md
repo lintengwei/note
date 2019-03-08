@@ -7,6 +7,7 @@
 ## npm 镜像
 
 > npm install -g cnpm --registry=https://registry.npm.taobao.org
+> npm 官方仓库 http://registry.npmjs.org
 
 ## npm 更新
 
@@ -25,6 +26,10 @@
 ### 包的版本规则
 
 ## cli
+
+[https://blog.sigoden.com/npm-can-kao-shou-ce/](https://blog.sigoden.com/npm-can-kao-shou-ce/)
+
+##
 
 - npm init
   - 初始化一个 node 项目

@@ -1,112 +1,68 @@
-# npm
+# npm 命令行
 
-## CLI commands
+[https://docs.npmjs.com/cli-documentation/](https://docs.npmjs.com/cli-documentation/)
 
-- [access](https://docs.npmjs.com/cli/access)
-   - Set access level on published packages
-- [adduser](https://docs.npmjs.com/cli/adduser)
-   - Add a registry user account
-- [bin](https://docs.npmjs.com/cli/bin)
-   - Display npm bin folder
-- [bugs](https://docs.npmjs.com/cli/bugs)
-   - Bugs for a package in a web browser maybe
-- [build](https://docs.npmjs.com/cli/build)
-   - Build a package
-- [bundle](https://docs.npmjs.com/cli/bundle)
-   - REMOVED
-- [cache](https://docs.npmjs.com/cli/cache)
-   - Manipulates packages cache
-- [ci](https://docs.npmjs.com/cli/ci)
-   - Install a project with a clean slate
-- [completion](https://docs.npmjs.com/cli/completion)
-   - Tab Completion for npm
-- [config](https://docs.npmjs.com/cli/config)
-   - Manage the npm configuration files
-- [dedupe](https://docs.npmjs.com/cli/dedupe)
-   - Reduce duplication
-- [deprecate](https://docs.npmjs.com/cli/deprecate)
-   - Deprecate a version of a package
-- [dist-tag](https://docs.npmjs.com/cli/dist-tag)
-   - Modify package distribution tags
-- [docs](https://docs.npmjs.com/cli/docs)
-   - Docs for a package in a web browser maybe
-- [doctor](https://docs.npmjs.com/cli/doctor)
-   - Check your environments
-- [edit](https://docs.npmjs.com/cli/edit)
-   - Edit an installed package
-- [explore](https://docs.npmjs.com/cli/explore)
-   - Browse an installed package
-- [help](https://docs.npmjs.com/cli/help)
-   - Get help on npm
-- [help-search](https://docs.npmjs.com/cli/help-search)
-   - Search npm help documentation
-- [init](https://docs.npmjs.com/cli/init)
-   - Interactively create a package.json file
-- [install](https://docs.npmjs.com/cli/install)
-   - Install a package
-- [install-test](https://docs.npmjs.com/cli/install-test)
-   - undefined
-- [link](https://docs.npmjs.com/cli/link)
-   - Symlink a package folder
-- [logout](https://docs.npmjs.com/cli/logout)
-   - Log out of the registry
-- [ls](https://docs.npmjs.com/cli/ls)
-   - List installed packages
-- [npm](https://docs.npmjs.com/cli/npm)
-   - javascript package manager
-- [outdated](https://docs.npmjs.com/cli/outdated)
-   - Check for outdated packages
-- [owner](https://docs.npmjs.com/cli/owner)
-   - Manage package owners
-- [pack](https://docs.npmjs.com/cli/pack)
-   - Create a tarball from a package
-- [ping](https://docs.npmjs.com/cli/ping)
-   - Ping npm registry
-- [prefix](https://docs.npmjs.com/cli/prefix)
-   - Display prefix
-- [profile](https://docs.npmjs.com/cli/profile)
-   - Change settings on your registry profile
-- [prune](https://docs.npmjs.com/cli/prune)
-   - Remove extraneous packages
-- [publish](https://docs.npmjs.com/cli/publish)
-   - Publish a package
-- [rebuild](https://docs.npmjs.com/cli/rebuild)
-   - Rebuild a package
-- [repo](https://docs.npmjs.com/cli/repo)
-   - Open package repository page in the browser
-- [restart](https://docs.npmjs.com/cli/restart)
-   - Restart a package
-- [root](https://docs.npmjs.com/cli/root)
-   - Display npm root
-- [run-script](https://docs.npmjs.com/cli/run-script)
-   - Run arbitrary package scripts
-- [search](https://docs.npmjs.com/cli/search)
-   - Search for packages
-- [shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap)
-   - Lock down dependency versions for publication
-- [star](https://docs.npmjs.com/cli/star)
-   - Mark your favorite packages
-- [stars](https://docs.npmjs.com/cli/stars)
-   - View packages marked as favorites
-- [start](https://docs.npmjs.com/cli/start)
-   - Start a package
-- [stop](https://docs.npmjs.com/cli/stop)
-   - Stop a package
-- [team](https://docs.npmjs.com/cli/team)
-   - Manage organization teams and team memberships
-- [test](https://docs.npmjs.com/cli/test)
-   - Test a package
-- [token](https://docs.npmjs.com/cli/token)
-   - Manage your authentication tokens
-- [uninstall](https://docs.npmjs.com/cli/uninstall)
-   - Remove a package
-- [unpublish](https://docs.npmjs.com/cli/unpublish)
-   - Remove a package from the registry
-- [update](https://docs.npmjs.com/cli/update)
-   - Update a package
-- [version](https://docs.npmjs.com/cli/version)
-   - Bump a package version
-- [view](https://docs.npmjs.com/cli/view)
-   - View registry info
-- [whoami](https://docs.npmjs.com/cli/whoami)
-   - Display npm username
+## npm 控制
+
+- npm install npm@latest -g
+  - 更新 npm 版本
+- npm -version
+  - 查看当前版本
+- npm root <-g>
+  - 查看当前包管理位置
+- npm prefix [-g]
+  - 查看当前包管理的父目录
+
+## 用户控制
+
+- npm login
+  - npm 用户登录
+- npm logout
+  - npm 用户登出
+- npm whoami
+  - 查看当前用户
+- npm token
+  - 查看当前用户的令牌
+
+## 关于包信息
+
+- npm home <package>
+  - 打开包的 github 主页
+- npm docs <package>
+  - 打开包的文档
+- npm bugs <package>
+  - 打开包的 github 仓库的 issue 页面
+- npm view <package>
+  - 查看包的版本信息
+- npm ls
+  - 查看已安装的包
+  - -prod
+    - 查看 dependencies 包
+  - -dev
+    - 查看 dev-dependencies 包
+  - -json
+    - 以 json 格式输出
+- npm search <package>
+  - 搜索包
+
+## 远程包管理
+
+- npm publish --access=public
+  - 发布包
+  - 在删除包之后的 24 小时内，不允许在发布相同的包
+  - 在发布包内的 72 小时，不允许删除包
+- npm unpublish /f
+  - /f
+    - 强制从仓库中删除包
+  - 删除包
+
+## 本地包管理
+
+- npm install --save|-S <package>
+  - 默认本地安装
+  - <-g> 全局安装
+- npm uninstall --save <package>
+  - 写在包
+- npm update <-g> <pkg..>
+  - 更新包
+  - 如果指定了包名，则更新指定包，否则更新全部！
