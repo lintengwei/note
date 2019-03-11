@@ -1,3 +1,15 @@
+- [webpack 使用](#webpack-%E4%BD%BF%E7%94%A8)
+  - [基本属性](#%E5%9F%BA%E6%9C%AC%E5%B1%9E%E6%80%A7)
+  - [开发环境的配置需求](#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
+    - [source-map](#source-map)
+    - [观察模式](#%E8%A7%82%E5%AF%9F%E6%A8%A1%E5%BC%8F)
+    - [热模块替换](#%E7%83%AD%E6%A8%A1%E5%9D%97%E6%9B%BF%E6%8D%A2)
+  - [生产环境配置](#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)
+    - [提取公共文件](#%E6%8F%90%E5%8F%96%E5%85%AC%E5%85%B1%E6%96%87%E4%BB%B6)
+  - [脚本](#%E8%84%9A%E6%9C%AC)
+  - [番外](#%E7%95%AA%E5%A4%96)
+    - [关于package.json中module字段的说明](#%E5%85%B3%E4%BA%8Epackagejson%E4%B8%ADmodule%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%B4%E6%98%8E)
+
 # webpack 使用
 
 [document](https://webpack.docschina.org/guides/)
@@ -40,16 +52,28 @@ module.exports = {
     - 基于内容的 hash。用该字段可以生成缓存更新文件
 - path
   - 目标输出目录 path 的绝对路径。
+- library
+  - 配合libraryTarget使用
+- libraryTarget
+  - 配置如何暴露library，有四种方式
+    - 暴露为一个变量
+      - 如果设置属性 library=MyLibrary，且未设置libraryTarget的值，则使用默认值'var'，将模块赋值给MyLibrary，在模块内导出的方法，变量等，都在MyLibrary为接口调用
+    - 通过在对象上赋值暴露
+    - 模块定义系统
+    - 其他targets
 
 ```javascript
-const path = require('path')
-module.exports = {
-  entry: '',
-  output: {
-    filename: '[name].bundle.js', //  name　对应entry object key
-    path: path.resolve(__dirname, '/dist')
+//  libraryTarget=='var'
+//  在html的script的脚本中，将暴露一个MyLibrary的全局变量
+//  在node环境中如何使用？
+module.exports={
+  //  ...
+  output:{
+    library:'MyLibrary'
   }
 }
+
+
 ```
 
 > module
@@ -87,7 +111,116 @@ module.exports = {
 };
 ```
 
+> devServer
+
+配置本地开发环境.
+webpack-dev-server 在编译之后不会写入到任何输出文件。而是将 bundle 文件保留在内存中，然后将它们 serve 到 server 中，就好像它们是挂载在 server 根路径上的真实文件一样。如果你的页面希望在其他不同路径中找到 bundle 文件，则可以通过 dev server 配置中的 publicPath 选项进行修改。
+会在内存中创建一个虚拟目录，模拟让生产环境中的输出位置。
+如果配置了 contentBase，当出现重名的时候，会优先使用内存中的文件
+
+例如：
+当前目录结构：
+
+- /
+  - src
+    - index.js
+  - public
+    - index.html
+
+```javascript
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
+module.exports = {
+  entry: {
+    index: path.resolve(__dirname, 'src/index.js')
+  },
+  devServer: {
+    port: 9999,
+    hot: true,
+    proxy: {
+      //  发送到 /api的请求服务会被转发到 3000端口的本地服务
+      '/api': 'http://localhost:3000'
+    }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'public/index.html'),
+      //  'html/index.html' http://localhost:9999/html/
+      filename: 'index.html' //  http://localhost:9999/ 能访问到
+    })
+  ]
+}
+```
+
+如果按以上配置，当运行开发环境的时候，会生成虚拟目录，如下：
+
+- /
+  - index.html
+  - output.js
+
+```javascript
+module.exports = {
+  devServer: {
+    //  告诉服务器从哪个目录中提供内容。只有在你想要提供静态文件时才需要
+    //  加载html等静态文件，如果是动态文件则指定 publicPath？
+    contentBase: String | Boolean|Array<String>,
+    //  当静态文件修改的时候是否刷新页面
+    watchContentBase: Boolean,
+    //  是否自动打开浏览器
+    open:Boolean,
+    //   在响应中添加指定头部
+    headers:Object,
+    //  在响应的时候是否启用压缩
+    compress:Boolean,
+    //  输入包的访问路径，默认为 /
+    publicPath:String|Array<String>,
+    //  服务监听的端口
+    port: Number,
+    //  是否开启热更新
+    hot: Boolean,
+
+    hotOnly: Boolean,
+    //  配置代理服务器
+    proxy:Object
+  }
+}
+```
+
+> resolve
+
+```javascript
+module.exports = {
+  resolve: {
+    //  指定解析的别名
+    alias: Object,
+    //  指定当导入文件未包含扩展名时候的匹配扩展名，默认['.js','.json']
+    extensions: Array,
+    //  指定导入时候强制扩展名 默认false
+    enforceExtension: Boolean,
+    //  指定导入包是按照package.json的哪个字段导入，
+    //  例如:['browser','module','main']
+    //  会优先搜索package.json中时候有 browser字段，module字段，main字段，优先使用最先匹配的字段
+    mainFields: Array,
+    //  如果未找到 mainFileds指定的字段搜索到文件，则按照mainFiles文件搜索
+    mainFiles: Array,
+    aliasField: Object,
+    plugins: Array
+  }
+}
+
+module.exports = {
+  resolve: {
+    alias: {
+      //  import utils from '$utils/utils' => import utils from 'src/utils/utils'
+      $utils: path.resolve(__dirname, 'src/utils/')
+    }
+  }
+}
+```
+
 > externals
+
+不打包指定的依赖模块
 
 ```javascript
 module.exports = {
@@ -134,6 +267,180 @@ module.exports = {
         }
       }
     }
+  }
+}
+```
+
+> target string | function (compiler)
+
+> webpack 的 target 属性，不要和 output.libraryTarget 属性混淆。有关 output 属性的更多信息，请查看我们的 指南。
+
+webpack 能够为多种环境或 target 构建编译。如果指定编译目标，webpack 会按照指定的编译目标环境来编译文件。
+
+当前支持的编译目标环境：
+
+| 选项              | 描述                                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| async-node        | 编译为类 Node.js 环境可用（使用 fs 和 vm 异步加载分块）                                        |
+| electron-main     | 编译为electron主进程                                                                           |
+| electron-renderer | 编译为 Electron 渲染进程                                                                       |
+| node              | 编译为类 Node.js 环境可用（使用 Node.js require 加载 chunk）                                   |
+| node-webkit       | 编译为 Webkit 可用，并且使用 jsonp 去加载分块。支持 Node.js 内置模块和 nw.gui 导入（实验性质） |
+| web               | 编译为类浏览器环境里可用（默认                                                                 |
+| webworker         | 编译成一个 WebWorker                                                                           |
+
+
+```javascript
+module.exports = {
+  //  ....
+}
+```
+
+> stats
+
+配置webpack打包过程中的控制台显示信息。系统提供预设的可选值：
+
+| 值            | 描述                          |
+| ------------- | ----------------------------- |
+| 'errors-only' | 只有发生错误输出              |
+| 'minimal'     | 只有发生错误输出/有新编译输出 |
+| 'none'        | 没有输出                      |
+| 'normal'      | 标准输出                      |
+| 'verbose'     | 全部输出                      |
+
+或则根据需求配置
+
+```javascript
+module.exports={
+   stats: {
+    // 未定义选项时，stats 选项的备用值(fallback value)（优先级高于 webpack 本地默认值）
+    all: undefined,
+
+    // 添加资源信息
+    assets: true,
+
+    // 对资源按指定的字段进行排序
+    // 你可以使用 `!field` 来反转排序。
+    // Some possible values: 'id' (default), 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
+    assetsSort: "field",
+
+    // 添加构建日期和构建时间信息
+    builtAt: true,
+
+    // 添加缓存（但未构建）模块的信息
+    cached: true,
+
+    // 显示缓存的资源（将其设置为 `false` 则仅显示输出的文件）
+    cachedAssets: true,
+
+    // 添加 children 信息
+    children: true,
+
+    // 添加 chunk 信息（设置为 `false` 能允许较少的冗长输出）
+    chunks: true,
+
+    // 添加 namedChunkGroups 信息
+    chunkGroups: true,
+
+    // 将构建模块信息添加到 chunk 信息
+    chunkModules: true,
+
+    // 添加 chunk 和 chunk merge 来源的信息
+    chunkOrigins: true,
+
+    // 按指定的字段，对 chunk 进行排序
+    // 你可以使用 `!field` 来反转排序。默认是按照 `id` 排序。
+    // Some other possible values: 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
+    chunksSort: "field",
+
+    // 用于缩短 request 的上下文目录
+    context: "../src/",
+
+    // `webpack --colors` 等同于
+    colors: false,
+
+    // 显示每个模块到入口起点的距离(distance)
+    depth: false,
+
+    // 通过对应的 bundle 显示入口起点
+    entrypoints: false,
+
+    // 添加 --env information
+    env: false,
+
+    // 添加错误信息
+    errors: true,
+
+    // 添加错误的详细信息（就像解析日志一样）
+    errorDetails: true,
+
+    // 将资源显示在 stats 中的情况排除
+    // 这可以通过 String, RegExp, 获取 assetName 的函数来实现
+    // 并返回一个布尔值或如下所述的数组。
+    excludeAssets: "filter" | /filter/ | (assetName) => true | false |
+      ["filter"] | [/filter/] | [(assetName) => true|false],
+
+    // 将模块显示在 stats 中的情况排除
+    // 这可以通过 String, RegExp, 获取 moduleSource 的函数来实现
+    // 并返回一个布尔值或如下所述的数组。
+    excludeModules: "filter" | /filter/ | (moduleSource) => true | false |
+      ["filter"] | [/filter/] | [(moduleSource) => true|false],
+
+    // 查看 excludeModules
+    exclude: "filter" | /filter/ | (moduleSource) => true | false |
+          ["filter"] | [/filter/] | [(moduleSource) => true|false],
+
+    // 添加 compilation 的哈希值
+    hash: true,
+
+    // 设置要显示的模块的最大数量
+    maxModules: 15,
+
+    // 添加构建模块信息
+    modules: true,
+
+    // 按指定的字段，对模块进行排序
+    // 你可以使用 `!field` 来反转排序。默认是按照 `id` 排序。
+    // Some other possible values: 'name', 'size', 'chunks', 'failed', 'issuer'
+    // For a complete list of fields see the bottom of the page
+    modulesSort: "field",
+
+    // 显示警告/错误的依赖和来源（从 webpack 2.5.0 开始）
+    moduleTrace: true,
+
+    // 当文件大小超过 `performance.maxAssetSize` 时显示性能提示
+    performance: true,
+
+    // 显示模块的导出
+    providedExports: false,
+
+    // 添加 public path 的信息
+    publicPath: true,
+
+    // 添加模块被引入的原因
+    reasons: true,
+
+    // 添加模块的源码
+    source: false,
+
+    // 添加时间信息
+    timings: true,
+
+    // 显示哪个模块导出被用到
+    usedExports: false,
+
+    // 添加 webpack 版本信息
+    version: true,
+
+    // 添加警告
+    warnings: true,
+
+    // 过滤警告显示（从 webpack 2.4.0 开始），
+    // 可以是 String, Regexp, 一个获取 warning 的函数
+    // 并返回一个布尔值或上述组合的数组。第一个匹配到的为胜(First match wins.)。
+    warningsFilter: "filter" | /filter/ | ["filter", /filter/] | (warning) => true|false
   }
 }
 ```
@@ -249,3 +556,10 @@ rem in package.json
 dev : webpack --config webpack.dev.conf.js rem 开发环境的配置文件
 build : webpack --config webpack.prod.conf.js rem 生产环境的配置文件
 ```
+
+## 番外
+
+### 关于package.json中module字段的说明
+
+[https://juejin.im/entry/5a99ed5c6fb9a028cd448d6a](https://juejin.im/entry/5a99ed5c6fb9a028cd448d6a)
+[https://segmentfault.com/a/1190000014286439](https://segmentfault.com/a/1190000014286439)

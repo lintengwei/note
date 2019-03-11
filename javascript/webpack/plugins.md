@@ -75,3 +75,81 @@ module.exports = {
   //  ...
 }
 ```
+
+## webpack.DllPlugin 插件|webpack.DllReferencePlugin 插件
+
+打包第三方或者项目中固定的文件到单独的 js 文件中，到后期项目打包的时候不需要再次打包，只要引用即可，缩短打包构建的时间。
+
+DllPlugin 插件的参数：
+
+- context
+  - 根据该字段来查找 manifest.json 的模块？
+- name
+  - required
+  - 暴露的 DLL 函数名
+- path
+  - required
+  - manifest.json 的存放位置
+
+DllReferencePlugin 插件的参数：
+
+- context
+  - required
+  - 上下文环境
+- manifest
+  - required
+  - 一个包含 name 和 content 的 Object，就是 DllPlugin 的输出文件
+- content
+- name
+- scope
+- sourceTye
+
+```javascript
+const webpack=require('webpack')
+const path=require('path')
+
+//  webpack.config.dll.js 打包动态依赖包的webpack配置
+module.exports={
+  //  ...
+  entry:{
+    verdors:['vue','lodash','moment']
+  },
+  output:{
+    filename:'[name].[chunkhash].js',
+    path:path.resolve(__dirname,'dll'),
+    library:'vendorsDll'
+  },
+  plugins:[
+    new webpack.DllPlugin({
+      name:'vendorsDll',
+      path:path.resolve(__dirname,'dll','manifest.json')
+    })
+  ]
+}
+
+//  package.json
+{
+  "scripts":{
+    "build:dll":"webpack --config ./webpack.config.dll.js",
+    "build":"webpack --config ./webpack.config.js"
+  }
+}
+
+//  bat
+//  执行 npm run  build:dll 会在dll目录下生成依赖的js文件和manifest.json依赖信息文件
+
+//  webpack.confit.js
+module.exports={
+  //  ...
+  plugins:[
+    new webpack.DllReferencePlugin({
+      context:__dirname,
+      manifest:require(path.resolve(__dirname,'dll','manifest.json'))
+    })
+  ]
+}
+
+//  bat
+//  npm run build
+//  然后在html文件导入之前生成的动态js文件，一定要放在最前面
+```
