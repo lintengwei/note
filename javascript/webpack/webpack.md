@@ -1,4 +1,5 @@
 - [webpack 使用](#webpack-%E4%BD%BF%E7%94%A8)
+  - [疑问](#%E7%96%91%E9%97%AE)
   - [基本属性](#%E5%9F%BA%E6%9C%AC%E5%B1%9E%E6%80%A7)
   - [开发环境的配置需求](#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
     - [source-map](#source-map)
@@ -6,6 +7,7 @@
     - [热模块替换](#%E7%83%AD%E6%A8%A1%E5%9D%97%E6%9B%BF%E6%8D%A2)
   - [生产环境配置](#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)
     - [提取公共文件](#%E6%8F%90%E5%8F%96%E5%85%AC%E5%85%B1%E6%96%87%E4%BB%B6)
+  - [懒加载](#%E6%87%92%E5%8A%A0%E8%BD%BD)
   - [脚本](#%E8%84%9A%E6%9C%AC)
   - [番外](#%E7%95%AA%E5%A4%96)
     - [关于package.json中module字段的说明](#%E5%85%B3%E4%BA%8Epackagejson%E4%B8%ADmodule%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%B4%E6%98%8E)
@@ -13,6 +15,23 @@
 # webpack 使用
 
 [document](https://webpack.docschina.org/guides/)
+
+```json
+//  安装的插件
+{
+  "devDependencies": {
+    "clean-webpack-plugin": "^2.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-manifest-plugin": "^2.0.4"
+  }
+}
+```
+
+## 疑问
+
+1. webpack的数据流向是怎么样的，是先流向loaders还是plugins又或者是其他？
 
 ## 基本属性
 
@@ -53,7 +72,7 @@ module.exports = {
 - path
   - 目标输出目录 path 的绝对路径。
 - library
-  - 配合libraryTarget使用
+  - 配合libraryTarget使用，表示输出包的名称
 - libraryTarget
   - 配置如何暴露library，有四种方式
     - 暴露为一个变量
@@ -220,7 +239,7 @@ module.exports = {
 
 > externals
 
-不打包指定的依赖模块
+不会打包指定的模块。例如通过cdn来引用脚本的时候，可以通过设置这个属性来避免webpack打包模。
 
 ```javascript
 module.exports = {
@@ -233,14 +252,45 @@ module.exports = {
     }
   }
 }
+
+//  example
+//  in index.js
+import _ from 'lodash'
+
+//  webpack.config.js
+module.exports={
+  //  ...
+  externals:{
+    //  因为在index文件中导入的是 lodash ，所以key是lodash
+    //  在html的cdn中lodash是以【_】暴露在window下面的，所以是 _
+    lodash:'_'
+  }
+}
+
+//  in html
+<script src='http://www.cdn.com/lodash.min.js'></script>
+<script src='http://www.app.com/app.min.js'></script>
 ```
 
 > optimization
+
+优化性能。默认webpack只会在生产环境下压缩js代码，使用的压缩插件是【terser-webpack-plugin】，通过属性minimize的值来确定是否开启压缩，当mode为【production】默认开启。
+如果需要压缩css或者其他的文件需要额外指定压缩插件【css-mini-extract-plugin】，并且把压缩插件至于optimization的minimizer数组下.
 
 ```javascript
 module.exports = {
   //  ...
   optimization: {
+    //  是否开启js压缩 生产环境默认开启
+    minimize:Boolean,
+    //  指定压缩插件
+    //  js 系统默认的是【terser-webpack-plugin】无需配置
+    //  css 【css-mini-extract-plugin】
+    minimizer:Array,
+    //  生成运行时依赖加载 runtime.js
+    runtimeChunk:{
+      name:'runtime'
+    },
     splitChunks: {
       chunks: 'async', //  async initial all
       minSize: 30000, //  文件大小至少为多少才会分离，默认３０kb。优先级大于【minChunks】
@@ -317,6 +367,7 @@ module.exports={
     all: undefined,
 
     // 添加资源信息
+    // 静态资源列表
     assets: true,
 
     // 对资源按指定的字段进行排序
@@ -445,6 +496,25 @@ module.exports={
 }
 ```
 
+> performance
+
+这些选项控制入口和资源的文件限制
+
+```javascript
+module.exports={
+  //  ...
+  performance:{
+    //  default 250000  byte
+    maxEntrypointSize:400000,
+    maxAssetsSize:250000,
+    //  过滤哪些模块需要限制，然后发出警告
+    assetFilter(assetFilename){
+      return assetFilname.endsWith('.js')
+    }
+  }
+}
+```
+
 ## 开发环境的配置需求
 
 ### source-map
@@ -545,6 +615,27 @@ module.exports = {
     }
   }
 }
+```
+
+## 懒加载
+
+当某些模块是通过用户交互之后才使用的，可以使用webpack的模块懒加载功能。
+
+```javascript
+//  index.js
+let button=document.getElementById('button')
+button.addEventListener('click',e=>{
+  //  es6语法 返回一个Promise  如何设置模块名？？
+  import('./test.js').then(module=>{
+    let a=module.default
+    a.test()
+  })
+
+  //  require语法 .第三个参数是模块命名，如果不设置，webpack会设置为id，不便于阅读
+    require.ensure(['./test.js'],function(require){
+
+    },'test')
+})
 ```
 
 ## 脚本

@@ -4,7 +4,7 @@
 
 ### 属性描述符
 
-如果是对象字面量创建的对象 writable configurable enumberable 三哥属性都是 true
+如果是对象字面量创建的对象 writable configurable enumberable 三个属性都是 true
 如果是 Object.defainedProperty(obj,property,{
 value,
 [writable default false][cinfigurable default false]
@@ -52,9 +52,9 @@ Object.assign(target,source1[,source2])
 isPrototypeOf() 与 instanceof 运算符不同。在表达式 "object instanceof AFunction"中，object 的原型链是针对 AFunction.prototype 进行检查的，而不是针对 AFunction 本身。
 
 ```javascript
-let a = [];
-Array.prototype.isPrototype(a); // true
-a instanceof Array; // true
+let a = []
+Array.prototype.isPrototype(a) // true
+a instanceof Array // true
 ```
 
 ## Regexp
@@ -79,19 +79,19 @@ a instanceof Array; // true
 //  去除数组元素的首尾空格
 //  调用call方法，并且把call的this上下文指向trim
 function get(arr) {
-  return arr.map(Function.prototype.call, String.prototype.trim);
+  return arr.map(Function.prototype.call, String.prototype.trim)
 }
 function get(arr) {
   return arr.map(function(...args) {
-    return String.prototype.trim.call(...args);
-  });
+    return String.prototype.trim.call(...args)
+  })
 }
 function get(arr) {
-  return arr.map(String.prototype.trim.call);
+  return arr.map(String.prototype.trim.call)
 }
 
 // return 'A'
-Function.prototype.call.call(String.prototype.toUpperCase, 'a');
+Function.prototype.call.call(String.prototype.toUpperCase, 'a')
 ```
 
 ## Array
@@ -114,16 +114,69 @@ Function.prototype.call.call(String.prototype.toUpperCase, 'a');
 //  嵌套数组展开
 function expandArray(arr) {
   return arr.reduce((last, ele, i) => {
-    return last.concat(Array.isArray(ele) ? expandArray(ele) : ele);
-  }, []);
+    return last.concat(Array.isArray(ele) ? expandArray(ele) : ele)
+  }, [])
 }
 
 function expandArray(arr) {
   return arr.reduce(function(last, ele, index) {
     if (Array.isArray(ele)) {
-      ele = expandArray(ele);
+      ele = expandArray(ele)
     }
-    return last.concat(ele);
-  }, []);
+    return last.concat(ele)
+  }, [])
 }
 ```
+
+## 反射
+
+### Proxy 对象
+
+实例方法：
+
+- apply
+  - 拦截目标函数的调用
+  - 参数
+    - target
+      - 目标对象
+    - thisArg
+      - 被调用时的 this 上下文
+      - 指的是 proxy 实例被调用时候的上下文环境
+    - argumentsList
+      - 被调用时的参数列表
+- construct
+  - 拦截 new 操作
+- deleteProperty
+  - 拦截 delete 操作
+  - 参数
+    - target
+    - key
+- get
+  - 拦截获取值操作
+  - 参数
+    - target
+    - key
+    - receiver
+      - proxy 或者子类
+- set
+  - 拦截设置操作
+    - 参数
+      - target
+      - key
+      - value
+- getOwnPropertyDescriptor
+- getPrototypeOf
+- has
+- isEWxtensible
+- ownKeys
+- preventExtensions
+- setPrototypeOf
+
+```javascript
+//  apply
+```
+
+### Reflect 对象
+
+同将原来在 Object 上部分静态方法，放在 Reflect 上，便于维护。
+都是静态方法，在命名控件 Reflect 下，调用参照 Proxy

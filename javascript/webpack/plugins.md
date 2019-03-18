@@ -32,6 +32,7 @@ npm install --save-dev html-webpack-plugin
 ## CleanWebpackPlugin
 
 [options](https://github.com/johnagan/clean-webpack-plugin)
+默认会清除 webpackOptions.output 的 path 下的文件，可以手动配置
 
 ```bat
 rem install
@@ -41,25 +42,66 @@ npm install --save-dev clean-webpack-plugin
 > Path
 
 ```javascript
-;[
-  'dist', // removes 'dist' folder
-  'build/*.*', // removes all files in 'build' folder
-  'web/*.js' // removes all JavaScript files in 'web' folder
-]
 ```
 
-> options 可选参数
-
-- allowExternal
-  - 允许插件清理 webpack 根目录之外的文件夹。
-
-## mini-css-extract-plugin
+## mini-css-extract-plugin|optimize-css-assets-webpack-plugin
 
 把 css 打包成一个单独的包.适用于 webpack@4.0.0。[doc](https://github.com/shama/stylus-loader)
+【optimize-css-assets-webpack-plugin】用于压缩 css 文件，webpack4+需要手动设置
 
-## ExtractTextWebpackPlugin
+注意点：
 
-把 css 打包成一个单独的包. webpack@3.0.0。 对于 webpack@4.0.0+，使用【mini-css-extract-plugin】
+1. 会把某个入口引入的所有 css 打包进同一个 css 文件？如何分离公共的 css 包？如何把分离的文件嵌入到 html 文件？分离的公共文件不会注入到 html 文件如何处理？
+
+配置【optimizaiton.splitChunks】来分离公共的文件
+
+```bat
+rem install
+yarn add --dev mini-css-extract-plugin
+yarn add --dev optimize-css-assets-webpack-plugin
+```
+
+```javascript
+const CssMiniExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+module.exports = {
+  //  ...
+  optimization: {
+    minimizer: [
+      //  压缩js
+      // new UglifyJsPlugin({
+      //   cache: true,
+      //   parallel: true,
+      //   sourceMap: true // set to true if you want JS source maps
+      // }),
+      new OptimizeCSSAssetsPlugin({})
+    ]
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css/,
+        use: [
+          {
+            loader: CssMiniExtractPlugin.loader,
+            options: {}
+          },
+          'css-loader'
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new CssMiniExtractPlugin({
+      filename: '[name].[chunkhash].css'
+    })
+  ]
+}
+```
+
+## ExtractTextWebpackPlugin【弃用，使用上面的】
+
+把 css 打包成一个单独的包. webpack@3.0.0。 对于 webpack@4.0.0+，使用【mini-css-extract-plugin】。不需要同 style-loader 共用
 
 ```bat
 rem install
@@ -69,10 +111,61 @@ npm install --save-dev extract-text-webpack-plugin
 ```javascript
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const extract = new ExtractTextPlugin({
+  //  输出的文件名 类似 output
   filename: 'common.[chunkhash].css'
 })
 module.exports = {
   //  ...
+}
+```
+
+## split-chunks-plugin
+
+[https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkscachegroups](https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkscachegroups)
+把公共部分抽离出来单独打包成一个文件，已经合并到 webpack 的标准配置中。
+配置参数是【optimization.splitChunks:<Object>】
+
+==cacheGroups 可以重写所有 splitChunks 的属性==
+==设置 cacheGroups 之后，webpack 会改变加载方式==
+
+```javascript
+module.exports = {
+  //  ...
+  optimization: {
+    splitChunks: {
+      //  多个文件的分隔符，默认~，当分离的包包含多个的时候使用
+      automaticNameDelimiter: '~',
+      //  指定哪一些模块需要被优化
+      chunks: 'all|async|initial',
+      //  按需加载是最大的并行请求数目
+      maxAsyncRequests: 3,
+      //  入口点耳朵最大请求数量
+      maxInitialRequests: 3,
+      //  需要共享几次才会单独拆份出来
+      minChunks: 3,
+      //  要生成块的最小大小（字节）
+      minSize: 200000,
+      maxSize: 200,
+      //  拆分的模块名称
+      //  true | function (module, chunks, cacheGroupKey) | string
+      name: 'lib',
+      //  缓存组可以集成或者覆盖splitChunks设置的所有属性。但是【test】，【priorty】，【reuseExistingChunk】只能在这里设置，可以通过设置cacheGroups.default=false 来禁用缓存组
+      cacheGroups: {
+        // 优先级  某个模块可能会被多个缓存组检测到，设置该属性的缓存组值越大，包就会打包进这里
+        priority: 10,
+        //  一下两个为缓存组
+        vendors: {
+          //  如果当前块包含已经从主包中分离出来的模块，那么它将被重用，而不是生成新的模块。这可能会影响块的结果文件名。
+          reuseExistingChunks: true,
+          //  控制此缓存组选择的模块。省略它将选择所有模块。它可以匹配绝对模块资源路径或块名称。匹配块名称时，将选择块中的所有模块。
+          test: /\.css/,
+          //  允许仅当文件名是初始块时重写该文件名。output.filename中可用的所有占位符也在此处可用。
+          filename: '[name].common.css'
+        },
+        libs: {}
+      }
+    }
+  }
 }
 ```
 
@@ -152,4 +245,21 @@ module.exports={
 //  bat
 //  npm run build
 //  然后在html文件导入之前生成的动态js文件，一定要放在最前面
+```
+
+## webpack-manifest-plugin
+
+在 output 根目录下生成一个 manifest.json 映射文件。
+
+```bat
+rem install
+ yarn add --dev webpack-manifest-plugin
+```
+
+```javascript
+const ManifestPlugin = require('webpack-manifest-plugin')
+module.exports = {
+  //  ...
+  plugins: [new ManifestPlugin()]
+}
 ```
