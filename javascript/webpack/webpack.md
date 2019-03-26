@@ -130,6 +130,41 @@ module.exports = {
 };
 ```
 
+2. Rule.resource|Rule.issuer 如何使用？
+
+Rule.test、Rule.include、Rule.exclude都是从resource衍生出来的。使用resource可以更加粒度的控制匹配模式。而issuer则是当resource匹配的时候的文件的导入源。可以动态生成【use】属性？
+
+```javascript
+//  index.js
+import 'index.css'
+import 'test.css'
+
+//  webpack.config.js
+module.exports={
+  //  ...
+  module:{
+    rules:[
+      {
+        use:['css-loader'],
+        resource(path){
+          //  ../index.js
+          //  return  true/false
+        },
+        issuer(path){
+          //  ../index.css  ../test.css
+          // 设置匹配模式
+          //  return true/false
+          if(/\.css$/.test(path)){
+            return true
+          }
+          return false
+        }
+      }
+    ]
+  }
+}
+```
+
 > devServer
 
 配置本地开发环境.
@@ -514,6 +549,10 @@ module.exports={
   }
 }
 ```
+
+> devtool
+
+源码映射文件。此选项控制是否生成，以及如何生成 source map。
 
 ## 开发环境的配置需求
 

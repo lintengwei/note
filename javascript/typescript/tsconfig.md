@@ -1,6 +1,6 @@
 - [tsconfig](#tsconfig)
   - [files](#files)
-  - [include/enclude](#includeenclude)
+  - [include/exclude](#includeexclude)
   - [compilerOptions](#compileroptions)
     - [一些配置](#%E4%B8%80%E4%BA%9B%E9%85%8D%E7%BD%AE)
 
@@ -12,7 +12,7 @@
 
 指定那些文件参与编译
 
-## include/enclude
+## include/exclude
 
 > Array
 
@@ -41,7 +41,6 @@
   - 如何输出向源码一样的文件结构
 - removeComments
   - 是否删除注释
--
 
 ### 一些配置
 
@@ -64,6 +63,7 @@
     "noEmit": true, // 不生成输出文件
     "importHelpers": true, // 从 tslib 导入辅助工具函数
     "isolatedModules": true, // 将每个文件做为单独的模块 （与 'ts.transpileModule' 类似）.
+    "moduleResolution": "node", // 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6)
 
     /* 严格的类型检查选项 */
     "strict": true, // 启用所有严格类型检查选项
@@ -79,7 +79,6 @@
     "noFallthroughCasesInSwitch": true, // 报告 switch 语句的 fallthrough 错误。（即，不允许 switch 的 case 语句贯穿）
 
     /* 模块解析选项 */
-    "moduleResolution": "node", // 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6)
     "baseUrl": "./", // 用于解析非相对模块名称的基目录
     "paths": {}, // 模块名到基于 baseUrl 的路径映射的列表
     "rootDirs": [], // 根文件夹列表，其组合内容表示项目运行时的结构内容
@@ -96,6 +95,12 @@
     /* 其他选项 */
     "experimentalDecorators": true, // 启用装饰器
     "emitDecoratorMetadata": true // 为装饰器提供元数据的支持
-  }
+  },
+  //  指定文件名
+  "files": {},
+  //  包含的文件路径
+  "include": [],
+  //  排除的文件路径
+  "exclude": []
 }
 ```

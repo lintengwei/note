@@ -2,6 +2,7 @@
   - [基本概念](#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5)
   - [定位](#%E5%AE%9A%E4%BD%8D)
   - [文本](#%E6%96%87%E6%9C%AC)
+  - [媒体查询](#%E5%AA%92%E4%BD%93%E6%9F%A5%E8%AF%A2)
   - [动画](#%E5%8A%A8%E7%94%BB)
   - [过渡](#%E8%BF%87%E6%B8%A1)
   - [效果](#%E6%95%88%E6%9E%9C)
@@ -73,6 +74,53 @@ pre-line：
   white-space: normal|pre|nowrap|pre-wrap|pre-line;
 }
 ```
+
+## 媒体查询
+
+[https://developer.mozilla.org/zh-CN/docs/Web/CSS/@media](https://developer.mozilla.org/zh-CN/docs/Web/CSS/@media)
+[https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Media_queries](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Media_queries)
+
+语法：@media [media_query_list[,media_query_list]]
+
+<pre>
+media_query_list: <media_query> [, <media_query> ]*
+media_query: [[only | not]? <media_type> [ and <expression> ]*]
+  | <expression> [ and <expression> ]*
+expression: ( <media_feature> [: <value>]? )
+media_type: all | aural | braille | handheld | print |
+  projection | screen | tty | tv | embossed
+media_feature: width | min-width | max-width
+  | height | min-height | max-height
+  | device-width | min-device-width | max-device-width
+  | device-height | min-device-height | max-device-height
+  | aspect-ratio | min-aspect-ratio | max-aspect-ratio
+  | device-aspect-ratio | min-device-aspect-ratio | max-device-aspect-ratio
+  | color | min-color | max-color
+  | color-index | min-color-index | max-color-index
+  | monochrome | min-monochrome | max-monochrome
+  | resolution | min-resolution | max-resolution
+  | scan | grid
+</pre>
+
+```css
+/* 没有媒体类型 默认是不是screen */
+@media (min-width: 700px) and (orientation: landscape) {
+  ...;
+}
+@media tv and (min-width: 700px) and (orientation: landscape) {
+  ...;
+}
+@media screen and (device-aspect-ratio: 16/9),
+  screen and (device-aspect-ratio: 16/10) {
+  ...;
+}
+@import url(example.css) screen and (min-width: 800px);
+@import url(example.css) screen and (width: 800px), (color);
+```
+
+==note==
+
+1. width/height 是文档窗口的可见区域，而 device-width 是针对整个屏幕的可见区域
 
 ## 动画
 

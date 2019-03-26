@@ -1,4 +1,26 @@
+- [关于 package.json 的介绍](#%E5%85%B3%E4%BA%8E-packagejson-%E7%9A%84%E4%BB%8B%E7%BB%8D)
+  - [name](#name)
+  - [version](#version)
+  - [files](#files)
+  - [main](#main)
+  - [module](#module)
+  - [scripts](#scripts)
+  - [config](#config)
+  - [dependencies](#dependencies)
+  - [devDependencies](#devdependencies)
+  - [peerDependencies](#peerdependencies)
+  - [bundledDependencies](#bundleddependencies)
+  - [optionalDependencies](#optionaldependencies)
+  - [engines](#engines)
+  - [os](#os)
+  - [bin](#bin)
+  - [cpu](#cpu)
+  - [其他](#%E5%85%B6%E4%BB%96)
+  - [默认设置](#%E9%BB%98%E8%AE%A4%E8%AE%BE%E7%BD%AE)
+
 # 关于 package.json 的介绍
+
+[http://javascript.ruanyifeng.com/nodejs/packagejson.html#toc4](http://javascript.ruanyifeng.com/nodejs/packagejson.html#toc4)
 
 ## name
 
@@ -61,11 +83,29 @@ package-lock.json (use shrinkwrap instead)
 
 作为包的入口，如果使用者把我们的包作为依赖，当使用 require 的时候，返回的就是我们 expoort 的内容。
 
+## module
+
+es6 的入口。标准暂未支持，后续可能会支持
+
 ## scripts
 
 是一个包含脚本命令的字典，这些脚本在包的不同环境切换使用，可以参考 vue-cli
 
 ## config
+
+配置文件，可以在脚本中访问。
+
+```javascript
+//  package.json
+{
+  config: {
+    port: 9999
+  }
+}
+
+//  script
+let port = process.env.npm_package_config_port
+```
 
 ## dependencies
 
@@ -141,6 +181,52 @@ http://... See 'URLs as Dependencies' below
 ```javascript
 "os" : [ "darwin", "linux" ]
 "os" : [ "!win32" ]
+```
+
+## bin
+
+命令行对应的执行脚本。当指定了后，安装包的时候，会在 node_modules 下的.bin 目录下生成对应的命令行执行脚本。
+
+==脚本文件必须已这个开头【#!/usr/bin/env node】==
+
+```javascript
+//  package.json
+{
+  "bin":{
+    "create-react-app":"index.js"
+  }
+}
+
+//  在index.js文件中必须已 #!/usr/bin/env node 开头，否则会生成不一样的脚本
+#!/usr/bin/env node
+
+//  node_modules/.bin/create-react-app.cmd
+//  in window 会生成这样的脚本
+@IF EXIST "%~dp0\node.exe" (
+  "%~dp0\node.exe"  "%~dp0\..\create-ts-config\index.js" %*
+) ELSE (
+  @SETLOCAL
+  @SET PATHEXT=%PATHEXT:;.JS;=;%
+  node  "%~dp0\..\create-ts-config\index.js" %*
+)
+
+//  in linux 会生成类似这样的脚本
+#!/bin/sh
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+case `uname` in
+    *CYGWIN*) basedir=`cygpath -w "$basedir"`;;
+esac
+
+if [ -x "$basedir/node" ]; then
+  "$basedir/node"  "$basedir/../create-ts-config/index.js" "$@"
+  ret=$?
+else
+  node  "$basedir/../create-ts-config/index.js" "$@"
+  ret=$?
+fi
+exit $ret
+
 ```
 
 ## cpu

@@ -1,11 +1,17 @@
 - [typescript 的使用](#typescript-%E7%9A%84%E4%BD%BF%E7%94%A8)
   - [安装](#%E5%AE%89%E8%A3%85)
+  - [概念](#%E6%A6%82%E5%BF%B5)
+  - [编译](#%E7%BC%96%E8%AF%91)
   - [基本使用](#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
     - [接口](#%E6%8E%A5%E5%8F%A3)
     - [函数](#%E5%87%BD%E6%95%B0)
+  - [重要更新](#%E9%87%8D%E8%A6%81%E6%9B%B4%E6%96%B0)
+  - [FAQ](#faq)
 
 # typescript 的使用
 
+[https://www.tslang.cn/docs/home.html](https://www.tslang.cn/docs/home.html)
+[https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)
 [https://jkchao.github.io/typescript-book-chinese/#why](https://jkchao.github.io/typescript-book-chinese/#why)
 
 ## 安装
@@ -18,6 +24,50 @@ rem 本地安装typescrpit编译器
 cnpm install --save-dev typescript
 rem 查看typescript版本
 tsc -v
+```
+
+## 概念
+
+> 类型声明和变量声明
+
+- 类型声明
+  - class
+  - interface
+  - type
+- 变量声明
+  - var
+  - let
+  - const
+  - class
+
+> 模块
+
+不会暴露变量到全局，通过 commonjs、amd 等模块系统来进行模块的管理。可以使用模块依赖！
+
+> 命名空间
+
+会暴露一个变量到全局，使用闭包。 如果命名空间需要引入其他模块，则最后也会被编译成一个模块，不在是命名空间！
+
+> 类型别名
+
+使用 type 关键字来定义类型别名。
+类型别名会给一个类型起个新名字。 类型别名有时和接口很像，但是可以作用于原始值，联合类型，元组以及其它任何你需要手写的类型。
+
+1. type 和 interface 的区别是什么?
+
+[https://www.tslang.cn/docs/handbook/advanced-types.html](https://www.tslang.cn/docs/handbook/advanced-types.html)
+
+- interface 会创建新的类型，type 不会
+- interface 可以继承和实现，type 不能
+
+> 枚举
+
+## 编译
+
+配置编译文件 tsconfig.json
+
+```json
+{}
 ```
 
 ## 基本使用
@@ -90,3 +140,15 @@ function pickCard(x): any {
   }
 }
 ```
+
+## 重要更新
+
+> 元组
+
+自 2.7 版本之后，元组长度为初始化长度，不能往里面添加数据，只能操作数据。
+
+## FAQ
+
+1. 当引用模块出现报错，'cannot find module xxx'？
+
+typescript 默认的模块搜索方式是 classisc，我们需要设置 tsconfig.json 的 comlipierOptions 的 moduleResolution 为'node'，使用 node 的模块搜索方式
