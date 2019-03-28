@@ -12,9 +12,11 @@
   - [格式化上下文](#%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87)
     - [BFC](#bfc)
     - [IFC](#ifc)
+    - [FAQ](#faq)
 
 # css
 
+[css 规范](https://www.w3.org/Style/CSS/#specs)
 [https://developer.mozilla.org/zh-CN/docs/Web/CSS](https://developer.mozilla.org/zh-CN/docs/Web/CSS)
 [https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS)
 [http://css.doyoe.com/](http://css.doyoe.com/)
@@ -126,6 +128,24 @@ media_feature: width | min-width | max-width
 
 ## 过渡
 
+3D 变换
+
+> transform-style: preserve-3d;
+
+设置 3D 转换
+
+> perspective
+
+设置视距，就是观察者离 z 轴的距离，距离越远越小，越近越大
+
+> perspective-origin
+
+设置观察者的角度，在 xy 平面的位置，结合 perspective 最终确定观察者的位置
+
+> backface-visibility
+
+设置背部是否可见，【visible】【hidden】
+
 ## 效果
 
 ### filter
@@ -168,3 +188,7 @@ img {
 ### BFC
 
 ### IFC
+
+### FAQ
+
+1. transform 为什么对于行内元素不起作用？
