@@ -1,6 +1,7 @@
 # git 语法简要
 
 [document](https://git-scm.com/book/zh/v2)
+[https://blog.csdn.net/qq_36150631/article/details/81038485](https://blog.csdn.net/qq_36150631/article/details/81038485)
 
 ## git 配置文件
 
@@ -70,7 +71,7 @@ git checkout -- file
 
 rem  如果先执行 rm file，后又执行 git rm file ,则需要两步才能回到之前的工作区
 git reset HEAD -- file
-git checkout -- file  //恢复到删除前的工作区
+git checkout -- file  rem 恢复到删除前的工作区
 ```
 
 ### 分支
@@ -84,6 +85,10 @@ git checkout branchName
 rem 删除分支
 git branch -d branchName
 ```
+
+==注意点==
+
+1. 只有在当前分支执行【add】和【commit】之后，工作区才是原始的干净的，切换回其他分区才能找回该分区的状态
 
 ### 撤销文件的修改
 

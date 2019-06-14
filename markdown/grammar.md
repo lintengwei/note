@@ -23,6 +23,8 @@
 	* [标记](#标记)
 	* [缩略](#缩略)
 	* [表格](#表格)
+	* [plugins](#plugins)
+		* [mermaid](#mermaid)
 
 <!-- /code_chunk_output -->
 
@@ -225,3 +227,10 @@ the HTML specification
 | 1   | 2   |
 |     | 3   |
 ```
+
+### plugins
+
+#### mermaid
+
+[docs](https://mermaidjs.github.io/)
+markdown绘图插件，[https://blog.csdn.net/wangyaninglm/article/details/52887045](https://blog.csdn.net/wangyaninglm/article/details/52887045)

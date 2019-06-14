@@ -1,4 +1,7 @@
-# source_code
+- [Vue 简要概述](#vue-%E7%AE%80%E8%A6%81%E6%A6%82%E8%BF%B0)
+  - [加载 vue 框架会直接运行这几个初始化函数](#%E5%8A%A0%E8%BD%BD-vue-%E6%A1%86%E6%9E%B6%E4%BC%9A%E7%9B%B4%E6%8E%A5%E8%BF%90%E8%A1%8C%E8%BF%99%E5%87%A0%E4%B8%AA%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0)
+
+# Vue 简要概述
 
 ## 加载 vue 框架会直接运行这几个初始化函数
 
@@ -12,306 +15,349 @@ lifecycleMixin(Vue)
 renderMixin(Vue)
 ```
 
-## Vue 的初始化
+> initGlobalAPI
 
-1. 调用方法 Vue.prototype.\_init 方法进行初始化
+配置全局 api。
 
 ```javascript
-//  初始化组件的父子关系，以及设置一些实例属性
-initLifecycle(vm)
+function initGlobalAPI(Vue) {
+  // config
+  var configDef = {}
+  configDef.get = function() {
+    return config
+  }
+  {
+    configDef.set = function() {
+      warn(
+        'Do not replace the Vue.config object, set individual fields instead.'
+      )
+    }
+  }
+  Object.defineProperty(Vue, 'config', configDef)
 
-//  初始化父子通讯的事件
-initEvents(vm)
+  // exposed util methods.
+  // NOTE: these are not considered part of the public API - avoid relying on
+  // them unless you are aware of the risk.
+  //  暴露一些Vue的工具方法
+  Vue.util = {
+    warn: warn,
+    extend: extend,
+    mergeOptions: mergeOptions,
+    defineReactive: defineReactive$$1
+  }
 
-//  初始化渲染
-initRender(vm)
+  //  全局的设置观测方法
+  Vue.set = set
+  Vue.delete = del
+  Vue.nextTick = nextTick
 
-//  调用钩子函数
-callHook(vm, 'beforeCreate')
+  // 2.6 explicit observable API
+  Vue.observable = function(obj) {
+    observe(obj)
+    return obj
+  }
 
-//  初始化注入
-initInjections(vm) // resolve injections before data/props
+  //  创建Vue全局的components，filters，directives容器
+  Vue.options = Object.create(null)
+  ASSET_TYPES.forEach(function(type) {
+    Vue.options[type + 's'] = Object.create(null)
+  })
+  //  定义directives，components，filters的合并策略
+  ASSET_TYPES.forEach(function(type) {
+    strats[type + 's'] = mergeAssets
+  })
 
-//  初始化状态 data,props,watch,computed,methods等
-initState(vm)
+  // this is used to identify the "base" constructor to extend all plain-object
+  // components with in Weex's multi-instance scenarios.
+  Vue.options._base = Vue
 
-//  初始化提供者
-initProvide(vm) // resolve provide after data/props
+  //  注册内置的组件到全局组件中
+  extend(Vue.options.components, builtInComponents)
 
-//  完成之后调用钩子【created】，表示vue初始化工作完成，可以进行挂载操作
-callHook(vm, 'created')
+  //  初始化插件
+  initUse(Vue)
+  //  初始化混合
+  initMixin$1(Vue)
+  //  初始化集成
+  initExtend(Vue)
+  //  初始化全局的component，filter，directive的注册功能
+  initAssetRegisters(Vue)
+}
 
-//  把vue实例挂载在dom中
-vm.$mount(vm.$options.el)
+function initAssetRegisters(Vue) {
+  /**
+   * Create asset registration methods.
+   */
+  ASSET_TYPES.forEach(function(type) {
+    Vue[type] = function(id, definition) {
+      if (!definition) {
+        return this.options[type + 's'][id]
+      } else {
+        /* istanbul ignore if */
+        if (type === 'component') {
+          validateComponentName(id)
+        }
+        if (type === 'component' && isPlainObject(definition)) {
+          definition.name = definition.name || id
+          definition = this.options._base.extend(definition)
+        }
+        if (type === 'directive' && typeof definition === 'function') {
+          definition = { bind: definition, update: definition }
+        }
+        this.options[type + 's'][id] = definition
+        return definition
+      }
+    }
+  })
+}
 ```
 
-## 关于渲染
+> initMixin
 
-可以使用三种方式来渲染 vue，定义一个 render 函数，使用 template 字符串定义 html 文本，使用 el 节点告诉 vue 去获取里面的内容。其中优先级关系：
-==render>template>el==
-
-> render
-
-> template
-
-> el
+设置 Vue 的初始化方法
 
 ```javascript
-var mount = Vue.prototype.$mount
-
-//  第一次会调用这个方法来解析html模版，然后才会调用下面的mount方法
-Vue.prototype.$mount = function(el, hydrating) {
-  el = el && query(el)
-
-  /* istanbul ignore if */
-  if (el === document.body || el === document.documentElement) {
-    process.env.NODE_ENV !== 'production' &&
-      warn(
-        'Do not mount Vue to <html> or <body> - mount to normal elements instead.'
-      )
-    return this
+function Vue(options) {
+  if (!(this instanceof Vue)) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
   }
 
-  var options = this.$options
-  // resolve template/el and convert to render function
-  if (!options.render) {
-    var template = options.template
-    if (template) {
-      if (typeof template === 'string') {
-        if (template.charAt(0) === '#') {
-          template = idToTemplate(template)
-          /* istanbul ignore if */
-          if (process.env.NODE_ENV !== 'production' && !template) {
-            warn(
-              'Template element not found or is empty: ' + options.template,
-              this
-            )
-          }
-        }
-      } else if (template.nodeType) {
-        template = template.innerHTML
-      } else {
-        if (process.env.NODE_ENV !== 'production') {
-          warn('invalid template option:' + template, this)
-        }
-        return this
-      }
-    } else if (el) {
-      template = getOuterHTML(el)
-    }
-    if (template) {
-      /* istanbul ignore if */
-      if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-        mark('compile')
-      }
-
-      var ref = compileToFunctions(
-        template,
-        {
-          outputSourceRange: process.env.NODE_ENV !== 'production',
-          shouldDecodeNewlines: shouldDecodeNewlines,
-          shouldDecodeNewlinesForHref: shouldDecodeNewlinesForHref,
-          delimiters: options.delimiters, //  插值标识
-          comments: options.comments //  是否保留注释
-        },
-        this
-      )
-      var render = ref.render
-      var staticRenderFns = ref.staticRenderFns
-      options.render = render
-      options.staticRenderFns = staticRenderFns
-
-      /* istanbul ignore if */
-      if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-        mark('compile end')
-        measure('vue ' + this._name + ' compile', 'compile', 'compile end')
-      }
-    }
-  }
-  return mount.call(this, el, hydrating)
+  //  每次创建一个Vue实例，都会调用_init方法来进行必要的初始化
+  this._init(options)
 }
 
-// public mount method
-//  上面方法之后调用
-Vue.prototype.$mount = function(el, hydrating) {
-  el = el && inBrowser ? query(el) : undefined
-  return mountComponent(this, el, hydrating)
-}
+function initMixin(Vue) {
+  Vue.prototype._init = function(options) {
+    var vm = this
+    // a uid
+    //  vue实例的标识符
+    vm._uid = uid$3++
 
-function mountComponent(vm, el, hydrating) {
-  vm.$el = el
-  if (!vm.$options.render) {
-    vm.$options.render = createEmptyVNode
-    if (process.env.NODE_ENV !== 'production') {
-      /* istanbul ignore if */
-      if (
-        (vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
-        vm.$options.el ||
-        el
-      ) {
-        warn(
-          'You are using the runtime-only build of Vue where the template ' +
-            'compiler is not available. Either pre-compile the templates into ' +
-            'render functions, or use the compiler-included build.',
-          vm
-        )
-      } else {
-        warn(
-          'Failed to mount component: template or render function not defined.',
-          vm
-        )
-      }
-    }
-  }
-  callHook(vm, 'beforeMount')
-
-  var updateComponent
-  /* istanbul ignore if */
-  if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-    updateComponent = function() {
-      var name = vm._name
-      var id = vm._uid
-      var startTag = 'vue-perf-start:' + id
-      var endTag = 'vue-perf-end:' + id
-
+    var startTag, endTag
+    /* istanbul ignore if */
+    if (config.performance && mark) {
+      startTag = 'vue-perf-start:' + vm._uid
+      endTag = 'vue-perf-end:' + vm._uid
       mark(startTag)
-      var vnode = vm._render()
-      mark(endTag)
-      measure('vue ' + name + ' render', startTag, endTag)
-
-      mark(startTag)
-      vm._update(vnode, hydrating)
-      mark(endTag)
-      measure('vue ' + name + ' patch', startTag, endTag)
     }
-  } else {
-    updateComponent = function() {
-      vm._update(vm._render(), hydrating)
-    }
-  }
 
-  // we set this to vm._watcher inside the watcher's constructor
-  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
-  // component's mounted hook), which relies on vm._watcher being already defined
-  new Watcher(
-    vm,
-    updateComponent,
-    noop,
-    {
-      before: function before() {
-        if (vm._isMounted && !vm._isDestroyed) {
-          callHook(vm, 'beforeUpdate')
-        }
-      }
-    },
-    true /* isRenderWatcher */
-  )
-  hydrating = false
-
-  // manually mounted instance, call mounted on self
-  // mounted is called for render-created child components in its inserted hook
-  if (vm.$vnode == null) {
-    vm._isMounted = true
-    callHook(vm, 'mounted')
-  }
-  return vm
-}
-
-Vue.prototype._render = function() {
-  var vm = this
-  var ref = vm.$options
-  var render = ref.render
-  var _parentVnode = ref._parentVnode
-
-  if (_parentVnode) {
-    vm.$scopedSlots = normalizeScopedSlots(
-      _parentVnode.data.scopedSlots,
-      vm.$slots,
-      vm.$scopedSlots
-    )
-  }
-
-  // set parent vnode. this allows render functions to have access
-  // to the data on the placeholder node.
-  vm.$vnode = _parentVnode
-  // render self
-  var vnode
-  try {
-    // There's no need to maintain a stack becaues all render fns are called
-    // separately from one another. Nested component's render fns are called
-    // when parent component is patched.
-    currentRenderingInstance = vm
-    vnode = render.call(vm._renderProxy, vm.$createElement)
-  } catch (e) {
-    handleError(e, vm, 'render')
-    // return error render result,
-    // or previous vnode to prevent render error causing blank component
-    /* istanbul ignore else */
-    if (process.env.NODE_ENV !== 'production' && vm.$options.renderError) {
-      try {
-        vnode = vm.$options.renderError.call(
-          vm._renderProxy,
-          vm.$createElement,
-          e
-        )
-      } catch (e) {
-        handleError(e, vm, 'renderError')
-        vnode = vm._vnode
-      }
+    // a flag to avoid this being observed
+    vm._isVue = true //  标志位，用于防止vue被侦测？
+    // merge options
+    if (options && options._isComponent) {
+      // optimize internal component instantiation
+      // since dynamic options merging is pretty slow, and none of the
+      // internal component options needs special treatment.
+      //  如果是一个vue组件，
+      initInternalComponent(vm, options)
     } else {
-      vnode = vm._vnode
-    }
-  } finally {
-    currentRenderingInstance = null
-  }
-  // if the returned array contains only a single node, allow it
-  if (Array.isArray(vnode) && vnode.length === 1) {
-    vnode = vnode[0]
-  }
-  // return empty vnode in case the render function errored out
-  if (!(vnode instanceof VNode)) {
-    if (process.env.NODE_ENV !== 'production' && Array.isArray(vnode)) {
-      warn(
-        'Multiple root nodes returned from render function. Render function ' +
-          'should return a single root node.',
+      //  混合父级的options到实例内
+      vm.$options = mergeOptions(
+        resolveConstructorOptions(vm.constructor), //  cm.constructor===Vue
+        options || {},
         vm
       )
     }
-    vnode = createEmptyVNode()
-  }
-  // set parent
-  vnode.parent = _parentVnode
-  return vnode
-}
+    /* istanbul ignore else */
+    {
+      initProxy(vm)
+    }
+    // expose real self
+    vm._self = vm
+    initLifecycle(vm)
+    initEvents(vm)
+    initRender(vm)
+    callHook(vm, 'beforeCreate')
+    initInjections(vm) // resolve injections before data/props
+    initState(vm)
+    initProvide(vm) // resolve provide after data/props
+    callHook(vm, 'created')
 
-Vue.prototype._update = function(vnode, hydrating) {
-  var vm = this
-  var prevEl = vm.$el
-  var prevVnode = vm._vnode
-  var restoreActiveInstance = setActiveInstance(vm)
-  vm._vnode = vnode
-  // Vue.prototype.__patch__ is injected in entry points
-  // based on the rendering backend used.
-  if (!prevVnode) {
-    // initial render
-    vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
-  } else {
-    // updates
-    vm.$el = vm.__patch__(prevVnode, vnode)
+    /* istanbul ignore if */
+    if (config.performance && mark) {
+      vm._name = formatComponentName(vm, false)
+      mark(endTag)
+      measure('vue ' + vm._name + ' init', startTag, endTag)
+    }
+
+    if (vm.$options.el) {
+      vm.$mount(vm.$options.el)
+    }
   }
-  restoreActiveInstance()
-  // update __vue__ reference
-  if (prevEl) {
-    prevEl.__vue__ = null
+}
+```
+
+> stateMixin
+
+```javascript
+function stateMixin(Vue) {
+  // flow somehow has problems with directly declared definition object
+  // when using Object.defineProperty, so we have to procedurally build up
+  // the object here.
+  var dataDef = {}
+  dataDef.get = function() {
+    return this._data
   }
-  if (vm.$el) {
-    vm.$el.__vue__ = vm
+  var propsDef = {}
+  propsDef.get = function() {
+    return this._props
   }
-  // if parent is an HOC, update its $el as well
-  if (vm.$vnode && vm.$parent && vm.$vnode === vm.$parent._vnode) {
-    vm.$parent.$el = vm.$el
+  {
+    dataDef.set = function() {
+      warn(
+        'Avoid replacing instance root $data. ' +
+          'Use nested data properties instead.',
+        this
+      )
+    }
+    propsDef.set = function() {
+      warn('$props is readonly.', this)
+    }
   }
-  // updated hook is called by the scheduler to ensure that children are
-  // updated in a parent's updated hook.
+  Object.defineProperty(Vue.prototype, '$data', dataDef)
+  Object.defineProperty(Vue.prototype, '$props', propsDef)
+
+  //  注册实例的对象变更观测方法
+  Vue.prototype.$set = set
+  Vue.prototype.$delete = del
+
+  //  注册实例的watch方法
+  Vue.prototype.$watch = function(expOrFn, cb, options) {
+    var vm = this
+    if (isPlainObject(cb)) {
+      return createWatcher(vm, expOrFn, cb, options)
+    }
+    options = options || {}
+    options.user = true
+    var watcher = new Watcher(vm, expOrFn, cb, options)
+    if (options.immediate) {
+      try {
+        cb.call(vm, watcher.value)
+      } catch (error) {
+        handleError(
+          error,
+          vm,
+          'callback for immediate watcher "' + watcher.expression + '"'
+        )
+      }
+    }
+    return function unwatchFn() {
+      watcher.teardown()
+    }
+  }
+}
+```
+
+> eventsMixin
+
+定义实例的自定义事件。
+
+1. 父子组件通讯是如何实现的？
+
+在子组件【$emit】事件之后，会在vm._events里面去找对应的回调，那么当父组件【@eventName】的时候，会通过调用子组件实例的【$on】方法，向子组件的【vm.\_events】里面注入监听的回调
+
+```javascript
+function eventsMixin(Vue) {
+  var hookRE = /^hook:/
+
+  //  注册事件
+  Vue.prototype.$on = function(event, fn) {
+    var vm = this
+    if (Array.isArray(event)) {
+      for (var i = 0, l = event.length; i < l; i++) {
+        vm.$on(event[i], fn)
+      }
+    } else {
+      ;(vm._events[event] || (vm._events[event] = [])).push(fn)
+      // optimize hook:event cost by using a boolean flag marked at registration
+      // instead of a hash lookup
+      if (hookRE.test(event)) {
+        vm._hasHookEvent = true
+      }
+    }
+    return vm
+  }
+
+  Vue.prototype.$once = function(event, fn) {
+    var vm = this
+    function on() {
+      vm.$off(event, on)
+      fn.apply(vm, arguments)
+    }
+    on.fn = fn
+    vm.$on(event, on)
+    return vm
+  }
+
+  Vue.prototype.$off = function(event, fn) {
+    var vm = this
+    // all
+    if (!arguments.length) {
+      vm._events = Object.create(null)
+      return vm
+    }
+    // array of events
+    if (Array.isArray(event)) {
+      for (var i$1 = 0, l = event.length; i$1 < l; i$1++) {
+        vm.$off(event[i$1], fn)
+      }
+      return vm
+    }
+    // specific event
+    var cbs = vm._events[event]
+    if (!cbs) {
+      return vm
+    }
+    if (!fn) {
+      vm._events[event] = null
+      return vm
+    }
+    // specific handler
+    var cb
+    var i = cbs.length
+    while (i--) {
+      cb = cbs[i]
+      if (cb === fn || cb.fn === fn) {
+        cbs.splice(i, 1)
+        break
+      }
+    }
+    return vm
+  }
+
+  Vue.prototype.$emit = function(event) {
+    var vm = this
+    {
+      var lowerCaseEvent = event.toLowerCase()
+      if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
+        tip(
+          'Event "' +
+            lowerCaseEvent +
+            '" is emitted in component ' +
+            formatComponentName(vm) +
+            ' but the handler is registered for "' +
+            event +
+            '". ' +
+            'Note that HTML attributes are case-insensitive and you cannot use ' +
+            'v-on to listen to camelCase events when using in-DOM templates. ' +
+            'You should probably use "' +
+            hyphenate(event) +
+            '" instead of "' +
+            event +
+            '".'
+        )
+      }
+    }
+    var cbs = vm._events[event]
+    if (cbs) {
+      cbs = cbs.length > 1 ? toArray(cbs) : cbs
+      var args = toArray(arguments, 1)
+      var info = 'event handler for "' + event + '"'
+      for (var i = 0, l = cbs.length; i < l; i++) {
+        invokeWithErrorHandling(cbs[i], vm, args, vm, info)
+      }
+    }
+    return vm
+  }
 }
 ```

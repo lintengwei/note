@@ -1,5 +1,8 @@
 # redis
 
+redis 内存数据库是一个单进程单线程的服务器
+[https://www.cnblogs.com/jasontec/p/9699242.html](https://www.cnblogs.com/jasontec/p/9699242.html)
+
 ## 数据结构
 
 ### String
@@ -20,7 +23,7 @@
 - MSET
 - MSETNX
 - PSETEX
-- SET key value [EX seconds] [PX milliseconds] [NX|XX]
+- SET key value [EX seconds][px milliseconds] [NX|XX]
 - SETBIT key offset value
   - 位数统计，签到应用
 - SETEX
@@ -32,18 +35,18 @@
 
 - HDEL
 - HEXISTS
-- HGET key field 
+- HGET key field
   - 一次获取单个值
 - HGETALL
 - HINCRBY
 - HINCRBYFLOAT
 - HKEYS
 - HLEN
-- HMGET  key field [field ...]
+- HMGET key field [field ...]
   - 获取多个值
-- HMSET  key field value [field value ...]
+- HMSET key field value [field value ...]
   - 设置多个值
-- HSET  key field value
+- HSET key field value
   - 一次设置单个值
 - HSETNX
   - 将哈希表 key 中的域 field 的值设置为 value ，当且仅当域 field 不存在。
@@ -59,7 +62,7 @@
   - 返回一个集合的全部成员，该集合是所有给定集合之间的差集。不存在的 key 被视为空集。
   - 返回在其他集合不存在的元素数组
 - SDIFFSTORE destination key1 key2 [key3]
-  - 类似【SDIFF】,但是会把结果i存入【destionation】key中
+  - 类似【SDIFF】,但是会把结果 i 存入【destionation】key 中
   - note
     - 如果 destination 集合已经存在，则将其覆盖。
     - destination 可以是 key 本身。
@@ -71,7 +74,7 @@
 - SMEMBERS
 - SMOVE source destination member
   - 移动集合元素到其他集合
-- SPOP  
+- SPOP
   - 移出一个随机元素
 - SRANDMEMBER key [count]
   - 获取一个随机元素
@@ -79,7 +82,7 @@
     - 从 Redis 2.6 版本开始， SRANDMEMBER 命令接受可选的 count 参数：
     - 如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。
     - 如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。
-- SREM key member [member ...] 
+- SREM key member [member ...]
 - SUNION
 - SUNIONSTORE
 - SSCAN
@@ -89,11 +92,11 @@
 > 关于区间的操作都是闭区间？
 
 - BLPOP key [key ...] timeout
-  - LPOP的阻塞原语
+  - LPOP 的阻塞原语
     - 阻塞
       - 当有一个非空列表
     - 非阻塞
-      - 当key都不存在或者都为空，则会阻塞，直到有新元素插入或者超时
+      - 当 key 都不存在或者都为空，则会阻塞，直到有新元素插入或者超时
 - BRPOP
 - BRPOPLPUSH
 - LINDEX
@@ -103,14 +106,14 @@
   - 当 key 不存在时， key 被视为空列表，不执行任何操作。
 - LLEN
 - LPOP
-- LPUSH 
-  - 的给定key不存在时候创建
+- LPUSH
+  - 的给定 key 不存在时候创建
 - LPUSHX
-  - 当给定key不存在不做操作
+  - 当给定 key 不存在不做操作
 - LRANGE key start stop
   - 标(index)参数 start 和 stop 都以 0 为底，也就是说，以 0 表示列表的第一个元素，以 1 表示列表的第二个元素
   - 闭区间 start stop 同时包含
-- LREM  key count value
+- LREM key count value
   - 根据参数 count 的值，移除列表中与参数 value 相等的元素。
   - note
     - count > 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。
@@ -129,13 +132,13 @@
 ### SortedSet（有序集合）
 
 - ZADD
-  - ZADD key score member [[score member] [score member] ...]
+  - ZADD key score member [[score member][score member] ...]
     - 每个成员可以附加一个分数值
     - score 值可以是整数值或双精度浮点数。
     - 如果某个 member 已经是有序集的成员，那么更新这个 member 的 score 值，并通过重新插入这个 member 元素，来保证该 member 在正确的位置上。
   - note
     - 在 Redis 2.4 版本以前， ZADD 每次只能添加一个元素。
-- ZCARD 
+- ZCARD
   - 返回基数
 - ZCOUNT
   - ZCOUNT key min max
@@ -161,8 +164,8 @@
 
 > WATCH 命令可以为 Redis 事务提供 check-and-set （CAS）行为（乐观锁）
 > WATCH 使得 EXEC 命令需要有条件地执行： 事务只能在所有被监视键都没有被修改的前提下执行， 如果这个前提不能满足的话，事务就不会被执行。
-> MULTI之前先watch需要操作的key，如果在exec之前发现key的值被修改了，则放弃此次事务
-> 事务不管陈功与否，最后都会取消对key的watch
+> MULTI 之前先 watch 需要操作的 key，如果在 exec 之前发现 key 的值被修改了，则放弃此次事务
+> 事务不管陈功与否，最后都会取消对 key 的 watch
 
 ```cli
 redis> MULTI            # 标记事务开始
@@ -190,7 +193,7 @@ redis> EXEC             # 执行
 ## 发布订阅
 
 - PSUBSCRIBE pattern [pattern ...]
-  - 订阅一个或多个符合给定模式的频道。SUBSCRIBE的通配版本
+  - 订阅一个或多个符合给定模式的频道。SUBSCRIBE 的通配版本
 - PUBLISH channel message
   - 将信息 message 发送到指定的频道 channel 。
 - PUBSUB
@@ -202,3 +205,9 @@ redis> EXEC             # 执行
 - UNSUBSCRIBE [channel [channel ...]]
   - 指示客户端退订给定的频道。
   - 如果没有频道被指定，也即是，一个无参数的 UNSUBSCRIBE 调用被执行，那么客户端使用 SUBSCRIBE 命令订阅的所有频道都会被退订。在这种情况下，命令会返回一个信息，告知客户端所有被退订的频道。
+
+## key 的相关操作
+
+- del key [...key]
+  - 删除键
+- dump

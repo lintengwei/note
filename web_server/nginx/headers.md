@@ -55,7 +55,6 @@
 > 缓存相关
 
 - Cache-Control
-
 - If-Match
   - 如果在响应头中有返回 ETag 字段，在下次请求中可以通过【If-Match】【If-None-Match】头部携带该字段来决定是否获取文档。
 - If-None-Match

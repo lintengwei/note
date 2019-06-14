@@ -2,7 +2,7 @@
 chcp 65001
 choice /c abc
 echo %errorlevel%
-if %errorlevel% == 1 ( 
+if %errorlevel% == 1 (  
   echo a
 )
 if %errorlevel%==2 (
@@ -11,4 +11,5 @@ if %errorlevel%==2 (
 if %errorlevel%==3 (
   echo c
 )
+echo %~z1
 pause

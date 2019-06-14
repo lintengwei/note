@@ -180,3 +180,31 @@ function expandArray(arr) {
 
 同将原来在 Object 上部分静态方法，放在 Reflect 上，便于维护。
 都是静态方法，在命名控件 Reflect 下，调用参照 Proxy
+
+## EventTarget
+
+- addEventListener(type:string,handler:Function(event?:Event),Object?:{once?:Boolean,capture?:Boolean,passive?:Boolean})
+  - 添加事件侦听
+    - type
+      - 事件类型
+    - handler
+      - 事件触发回调
+    - Object
+      - 事件描述符
+        - once
+          - 表示该事件只会触发一次，触发之后移出
+        - capture
+          - 表示 listener 会在该类型的事件捕获阶段传播到该 EventTarget 时触发。
+          - 事件会通过传递的方式已知传到 dom 树的底层，如果底层没有添加对应的事件，并且高层又有对应的事件，那么该事件会在冒泡的对应的 node 的时候触发，如果把这个参数设置为【true】，那么事件会在底层之前拦截此事件，就是说和原来的触发方向相反。
+        - passive
+          - 设置为 true 时，表示 listener 永远不会调用 preventDefault()。如果 listener 仍然调用了这个函数，客户端将会忽略它并抛出一个控制台警告。
+- removeEventListener(type:string,handler?:Function)
+  - 移出时间侦听
+    - type
+      - 事件类型
+    - handler
+      - 可选参数，如果没有这个参数，表示移出指定事件的所有侦听器，否则只移出指定的 handler
+- dispatchEvent(type:string)
+  - 触发事件侦听
+    - type
+      - 事件类型

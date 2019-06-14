@@ -36,6 +36,10 @@ upstream name{
   server 192.168.1.116:6000 weight=2;
   server www.diet.com:6896 weight=6;
 }
+
+location / {
+  proxy_http http://name;
+}
 ```
 
 ## log 日志模块

@@ -6,7 +6,7 @@
 
 [图片来源](https://blog.csdn.net/wdehxiang/article/details/77619512)
 
-![ig](./images/20170827115532950.png)
+![ig](../images/20170827115532950.png)
 
 SpringMVC 流程:
 
@@ -31,7 +31,7 @@ SpringMVC 流程:
   - param
     - path
       - String
-    - ## method
+    - method
   - question
     - 是否有默认的方法。如果某个 controller 定义了 requestMapping 但是方法没有一个定义了 requestMapping，controller 如何处理？
 - @RequestBody

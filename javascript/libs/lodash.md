@@ -1,4 +1,4 @@
-# lodashapi
+# lodash api
 
 ## Lang
 

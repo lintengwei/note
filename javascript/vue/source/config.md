@@ -8,7 +8,7 @@ var config = {
   /**
    * Whether to suppress warnings.
    */
-  silent: false,
+  silent: false, //  是否忽略Vue的警告
 
   /**
    * Show production mode tip message on boot?
@@ -28,12 +28,12 @@ var config = {
   /**
    * Error handler for watcher errors
    */
-  errorHandler: null,
+  errorHandler: null, //  错误处理器
 
   /**
    * Warn handler for watcher warns
    */
-  warnHandler: null,
+  warnHandler: null, //  警告处理器
 
   /**
    * Ignore certain custom elements
@@ -84,7 +84,7 @@ var config = {
    * Perform updates asynchronously. Intended to be used by Vue Test Utils
    * This will significantly reduce performance if set to false.
    */
-  async: true,
+  async: true, //  是否开启异步更新，能提高性能。
 
   /**
    * Exposed for legacy reasons

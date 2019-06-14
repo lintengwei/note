@@ -230,3 +230,55 @@ JDK 1.1 = 45
 ### eclipse 中的.project 和 .classpath 文件的具体作用
 
 [https://blog.csdn.net/greensure/article/details/77113215](https://blog.csdn.net/greensure/article/details/77113215)
+
+### eclipse 的 tomcat 无法部署项目的情况
+
+1、在该项目中，找到.project 文件，打开：
+
+找到<natures>，在标签内部添加如下内容并保存。
+
+<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+
+<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+
+<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+
+<nature>org.eclipse.jdt.core.javanature</nature>
+
+<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
+
+3、删除.setting 文件夹下的文件，从其它 Eclipse web 项目(如果没有的话用 eclipse 新建一个）的.setting 文件下拷贝以下文件
+
+.jsdtscope
+
+org.eclipse.jdt.core.prefs
+
+org.eclipse.wst.common.component
+
+org.eclipse.wst.common.project.facet.core.xml
+
+org.eclipse.wst.jsdt.ui.superType.container
+
+org.eclipse.wst.jsdt.ui.superType.name
+
+4.修改 org.eclipse.wst.common.component 中项目名称相关的内容
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project-modules id="moduleCoreId" project-version="1.5.0">
+
+    <wb-module deploy-name="web">
+
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+
+        <property name="context-root" value="web"/>
+
+        <property name="java-output-path" value="/web/build/classes"/>
+
+    </wb-module>
+
+</project-modules>
+
+将上面 所以 deploy-name 值相同的地方改为你的项目名，同时把 source-path 改为/WebRoot(如果你的项目目录是 WebContent 就不用改了)
