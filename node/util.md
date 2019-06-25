@@ -1,10 +1,10 @@
 - [util](#util)
-  - [uril.callbackify(asyncFunction/Promise)](#urilcallbackifyasyncfunctionpromise)
+  - [uril.callbackify(asyncFunction/Promise)](#urilcallbackifyasyncFunctionPromise)
   - [util.promisify(original)](#utilpromisifyoriginal)
   - [util.deprecate(fn, msg[, code])](#utildeprecatefn-msg-code)
   - [util.format(format[, ...args])](#utilformatformat-args)
   - [util.inspect(object[, options])](#utilinspectobject-options)
-  - [Class: util.TextEncoder](#class-utiltextencoder)
+  - [Class: util.TextEncoder](#Class-utilTextEncoder)
 
 # util
 
@@ -27,6 +27,7 @@ const callback = util.callbackify(test)
 
 callback((err, res) => {
   if (err) {
+    //  output Error test
     console.log('error:', err)
   } else {
     console.log(res)
@@ -37,6 +38,14 @@ callback((err, res) => {
 ## util.promisify(original)
 
 - 让一个遵循异常优先的回调风格的函数， 即 (err, value) => ... 回调函数是最后一个参数, 返回一个返回值是一个 promise 版本的函数。跟 callbackify 相反
+
+```javascript
+const util=require('util')
+
+function test(){
+  
+}
+```
 
 ## util.deprecate(fn, msg[, code])
 

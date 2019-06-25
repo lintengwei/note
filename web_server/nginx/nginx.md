@@ -76,24 +76,6 @@ nginx -s[signal] command
 
 [全局可用变量](http://nginx.org/en/docs/varindex.html)
 
-> 常用变量
-
-- $content_length
-  - 文档长度
-- $request_uri
-  - 带域名的路径
-- $uri
-  - 路径
-- $host
-  - 主机
-- $hostname
-  - 带端口主机
-- $request_method
-  - 请求方法
-- $server_port
-- $server_protocol
-- $status
-
 ## 配置文件的语法
 
 ```conf
