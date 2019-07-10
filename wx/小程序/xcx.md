@@ -31,3 +31,47 @@
   1. 如何确定标题栏的高度？
   2. 宽度如果超出会怎么样？
   3. 会不会出现其他的一些问题？
+
+## 自定义组件
+
+### 自定义扩展组件【基础库2.2.3开始支持】
+
+自定义组件的扩展其实就是提供了修改自定义组件定义段的能力。
+
+```javascript
+//  调用内置函数 Behavior
+//  definitionFilter 是一个函数，在被调用时会注入两个参数，第一个参数是使用该 behavior 的 component/behavior 的定义对象，第二个参数是该 behavior 所使用的 behavior 的 definitionFilter 函数列表。
+module.exports=Behavior({
+  definitionFilter(defField){
+    defField.data.a=1
+    defField.data.b=2
+  }
+})
+
+//  在组件Component定义behavior字段。注意该字段只在Component内有效
+Component({
+  behavoid:[require('behavoir.js')],
+  ready(){
+
+  }
+})
+
+//  构建
+```
+
+
+### behavior
+
+预先定义通用的数据或者方法或者声明周期函数，然后通过Page的behavior属性添加进去
+
+合并规则：
+
+1. 如果有同名的属性或方法，组件本身的属性或方法会覆盖 behavior 中的属性或方法，如果引用了多个 behavior ，在定义段中靠后 behavior 中的属性或方法会覆盖靠前的属性或方法；
+2. 如果有同名的数据字段，如果数据是对象类型，会进行对象合并，如果是非对象类型则会进行相互覆盖；
+3. 生命周期函数不会相互覆盖，而是在对应触发时机被逐个调用。如果同一个 behavior 被一个组件多次引用，它定义的生命周期函数只会被执行一次。
+
+```javascript
+Page({
+  behaviors:[require('./behavior1.js')]
+})
+```

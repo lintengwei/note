@@ -10,7 +10,7 @@
   - [懒加载](#%E6%87%92%E5%8A%A0%E8%BD%BD)
   - [脚本](#%E8%84%9A%E6%9C%AC)
   - [番外](#%E7%95%AA%E5%A4%96)
-    - [关于package.json中module字段的说明](#%E5%85%B3%E4%BA%8Epackagejson%E4%B8%ADmodule%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%B4%E6%98%8E)
+    - [关于 package.json 中 module 字段的说明](#%E5%85%B3%E4%BA%8E-packagejson-%E4%B8%AD-module-%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%B4%E6%98%8E)
 
 # webpack 使用
 
@@ -31,7 +31,8 @@
 
 ## 疑问
 
-1. webpack的数据流向是怎么样的，是先流向loaders还是plugins又或者是其他？
+1. webpack 的数据流向是怎么样的，是先流向 loaders 还是 plugins 又或者是其他？
+2. html 没有引入 js 脚本，热更新失效的原因？webpack 的热更新是如何实现的？
 
 ## 基本属性
 
@@ -72,27 +73,25 @@ module.exports = {
 - path
   - 目标输出目录 path 的绝对路径。
 - library
-  - 配合libraryTarget使用，表示输出包的名称
+  - 配合 libraryTarget 使用，表示输出包的名称
 - libraryTarget
-  - 配置如何暴露library，有四种方式
+  - 配置如何暴露 library，有四种方式
     - 暴露为一个变量
-      - 如果设置属性 library=MyLibrary，且未设置libraryTarget的值，则使用默认值'var'，将模块赋值给MyLibrary，在模块内导出的方法，变量等，都在MyLibrary为接口调用
+      - 如果设置属性 library=MyLibrary，且未设置 libraryTarget 的值，则使用默认值'var'，将模块赋值给 MyLibrary，在模块内导出的方法，变量等，都在 MyLibrary 为接口调用
     - 通过在对象上赋值暴露
     - 模块定义系统
-    - 其他targets
+    - 其他 targets
 
 ```javascript
 //  libraryTarget=='var'
 //  在html的script的脚本中，将暴露一个MyLibrary的全局变量
 //  在node环境中如何使用？
-module.exports={
+module.exports = {
   //  ...
-  output:{
-    library:'MyLibrary'
+  output: {
+    library: 'MyLibrary'
   }
 }
-
-
 ```
 
 > module
@@ -132,7 +131,7 @@ module.exports = {
 
 2. Rule.resource|Rule.issuer 如何使用？
 
-Rule.test、Rule.include、Rule.exclude都是从resource衍生出来的。使用resource可以更加粒度的控制匹配模式。而issuer则是当resource匹配的时候的文件的导入源。可以动态生成【use】属性？
+Rule.test、Rule.include、Rule.exclude 都是从 resource 衍生出来的。使用 resource 可以更加粒度的控制匹配模式。而 issuer 则是当 resource 匹配的时候的文件的导入源。可以动态生成【use】属性？
 
 ```javascript
 //  index.js
@@ -140,21 +139,21 @@ import 'index.css'
 import 'test.css'
 
 //  webpack.config.js
-module.exports={
+module.exports = {
   //  ...
-  module:{
-    rules:[
+  module: {
+    rules: [
       {
-        use:['css-loader'],
-        resource(path){
+        use: ['css-loader'],
+        resource(path) {
           //  ../index.js
           //  return  true/false
         },
-        issuer(path){
+        issuer(path) {
           //  ../index.css  ../test.css
           // 设置匹配模式
           //  return true/false
-          if(/\.css$/.test(path)){
+          if (/\.css$/.test(path)) {
             return true
           }
           return false
@@ -274,7 +273,7 @@ module.exports = {
 
 > externals
 
-不会打包指定的模块。例如通过cdn来引用脚本的时候，可以通过设置这个属性来避免webpack打包模。
+不会打包指定的模块。例如通过 cdn 来引用脚本的时候，可以通过设置这个属性来避免 webpack 打包模。
 
 ```javascript
 module.exports = {
@@ -309,22 +308,22 @@ module.exports={
 
 > optimization
 
-优化性能。默认webpack只会在生产环境下压缩js代码，使用的压缩插件是【terser-webpack-plugin】，通过属性minimize的值来确定是否开启压缩，当mode为【production】默认开启。
-如果需要压缩css或者其他的文件需要额外指定压缩插件【css-mini-extract-plugin】，并且把压缩插件至于optimization的minimizer数组下.
+优化性能。默认 webpack 只会在生产环境下压缩 js 代码，使用的压缩插件是【terser-webpack-plugin】，通过属性 minimize 的值来确定是否开启压缩，当 mode 为【production】默认开启。
+如果需要压缩 css 或者其他的文件需要额外指定压缩插件【css-mini-extract-plugin】，并且把压缩插件至于 optimization 的 minimizer 数组下.
 
 ```javascript
 module.exports = {
   //  ...
   optimization: {
     //  是否开启js压缩 生产环境默认开启
-    minimize:Boolean,
+    minimize: Boolean,
     //  指定压缩插件
     //  js 系统默认的是【terser-webpack-plugin】无需配置
     //  css 【css-mini-extract-plugin】
-    minimizer:Array,
+    minimizer: Array,
     //  生成运行时依赖加载 runtime.js
-    runtimeChunk:{
-      name:'runtime'
+    runtimeChunk: {
+      name: 'runtime'
     },
     splitChunks: {
       chunks: 'async', //  async initial all
@@ -367,13 +366,12 @@ webpack 能够为多种环境或 target 构建编译。如果指定编译目标�
 | 选项              | 描述                                                                                           |
 | ----------------- | ---------------------------------------------------------------------------------------------- |
 | async-node        | 编译为类 Node.js 环境可用（使用 fs 和 vm 异步加载分块）                                        |
-| electron-main     | 编译为electron主进程                                                                           |
+| electron-main     | 编译为 electron 主进程                                                                         |
 | electron-renderer | 编译为 Electron 渲染进程                                                                       |
 | node              | 编译为类 Node.js 环境可用（使用 Node.js require 加载 chunk）                                   |
 | node-webkit       | 编译为 Webkit 可用，并且使用 jsonp 去加载分块。支持 Node.js 内置模块和 nw.gui 导入（实验性质） |
 | web               | 编译为类浏览器环境里可用（默认                                                                 |
 | webworker         | 编译成一个 WebWorker                                                                           |
-
 
 ```javascript
 module.exports = {
@@ -383,7 +381,7 @@ module.exports = {
 
 > stats
 
-配置webpack打包过程中的控制台显示信息。系统提供预设的可选值：
+配置 webpack 打包过程中的控制台显示信息。系统提供预设的可选值：
 
 | 值            | 描述                          |
 | ------------- | ----------------------------- |
@@ -536,14 +534,14 @@ module.exports={
 这些选项控制入口和资源的文件限制
 
 ```javascript
-module.exports={
+module.exports = {
   //  ...
-  performance:{
+  performance: {
     //  default 250000  byte
-    maxEntrypointSize:400000,
-    maxAssetsSize:250000,
+    maxEntrypointSize: 400000,
+    maxAssetsSize: 250000,
     //  过滤哪些模块需要限制，然后发出警告
-    assetFilter(assetFilename){
+    assetFilter(assetFilename) {
       return assetFilname.endsWith('.js')
     }
   }
@@ -658,22 +656,20 @@ module.exports = {
 
 ## 懒加载
 
-当某些模块是通过用户交互之后才使用的，可以使用webpack的模块懒加载功能。
+当某些模块是通过用户交互之后才使用的，可以使用 webpack 的模块懒加载功能。
 
 ```javascript
 //  index.js
-let button=document.getElementById('button')
-button.addEventListener('click',e=>{
+let button = document.getElementById('button')
+button.addEventListener('click', e => {
   //  es6语法 返回一个Promise  如何设置模块名？？
-  import('./test.js').then(module=>{
-    let a=module.default
+  import('./test.js').then(module => {
+    let a = module.default
     a.test()
   })
 
   //  require语法 .第三个参数是模块命名，如果不设置，webpack会设置为id，不便于阅读
-    require.ensure(['./test.js'],function(require){
-
-    },'test')
+  require.ensure(['./test.js'], function(require) {}, 'test')
 })
 ```
 
@@ -689,7 +685,7 @@ build : webpack --config webpack.prod.conf.js rem 生产环境的配置文件
 
 ## 番外
 
-### 关于package.json中module字段的说明
+### 关于 package.json 中 module 字段的说明
 
 [https://juejin.im/entry/5a99ed5c6fb9a028cd448d6a](https://juejin.im/entry/5a99ed5c6fb9a028cd448d6a)
 [https://segmentfault.com/a/1190000014286439](https://segmentfault.com/a/1190000014286439)
