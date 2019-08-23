@@ -180,3 +180,7 @@ function Encrypt(word) {
   return encrypted.ciphertext.toString().toUpperCase()
 }
 ```
+
+## 注意点
+
+1. 加密过的文本需要使用Hex，Base64编码传给解码方法才能正确解码！

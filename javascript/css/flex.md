@@ -1,14 +1,19 @@
-- [flex 布局](#flex-%E5%B8%83%E5%B1%80)
 
 # flex 布局
 
 [https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Flexible_Box_Layout/Aligning_Items_in_a_Flex_Container](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Flexible_Box_Layout/Aligning_Items_in_a_Flex_Container)
 
+## 基本概念
+
 ## flex-box 属性
 
 ### flex-direction
 
+子元素排布方向
+
 ### flex-wrap
+
+子元素超出容器时候的换行规则
 
 ### justify-content
 
@@ -39,6 +44,8 @@ CSS 的 align-content 属性设置了浏览器如何沿着伸缩盒子容器（f
 ### flex-basis
 
 flex-basis 属性在任何空间分配发生之前初始化 flex 子元素的尺寸.是否是用于计算剩余空间的。
+
+如果你的flex子元素 为自动调整大小， 则auto 会解析为其内容的大小.  此时你所熟知的min-content和max-content大小会变得有用,  flexbox 会将flex子元素的 max-content 大小作为 flex-basis. 下面的例子可以证明这一点。解释了为什么内置的文本不会自动换行，因为max-content作为内容区，所有不会自动换行
 
 > flex-basis:auto
 

@@ -21,6 +21,7 @@ create user 'test'@'localhost' identified by '123456';
 create database test;
 -- 给用户授权制定数据库 全部数据库 *.*
 grant all privileges on database.* to 'username'@'localhost' identified by 'password';
+
 -- 部分授权
 grant select,update privileges on database.* to 'username'@localhost identified;
 -- 收回授权

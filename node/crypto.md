@@ -194,4 +194,6 @@ const encrypted=md5.update('plainText|明文').digest().toString('hex')  //  转
   'seed-ofb')
 ]
 crypto.getCiphers()
+
+//  使用对称加密
 ```

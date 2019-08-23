@@ -10,13 +10,15 @@
     - [box-shadow](#box-shadow)
     - [border-image](#border-image)
   - [格式化上下文](#%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87)
-    - [BFC](#bfc)
-    - [IFC](#ifc)
-    - [FAQ](#faq)
+    - [BFC](#BFC)
+    - [IFC](#IFC)
+  - [特殊属性](#%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7)
+  - [FAQ](#FAQ)
 
 # css
 
-[css 规范](https://www.w3.org/Style/CSS/#specs)
+[css 规范](https://www.w3.org/Style/CSS/current-work)
+[docs](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference)
 [https://developer.mozilla.org/zh-CN/docs/Web/CSS](https://developer.mozilla.org/zh-CN/docs/Web/CSS)
 [https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS)
 [http://css.doyoe.com/](http://css.doyoe.com/)
@@ -25,14 +27,15 @@
 
 包含块
 
-[docs](https://developer.mozilla.org/zh-CN/docs/Web/CSS/All_About_The_Containing_Block)。元素的尺寸及位置，常常会受它的包含块所影响。对于一些属性，例如 width, height, padding, margin，绝对定位元素的偏移值 （比如 position 被设置为 absolute 或 fixed），当我们对其赋予百分比值时，这些值的计算值，就是通过元素的包含块计算得来。
+[docs](https://developer.mozilla.org/zh-CN/docs/Web/CSS/All_About_The_Containing_Block)。元素的尺寸及位置，常常会受它的包含块所影响。对于一些属性，例如 width, height, padding, margin，绝对定位元素的偏移值 （比如 position 被设置为 absolute 或 fixed），当我们对其赋予百分比值时，这些值的计算值，就是通过元素的包含块计算得来。大多数情况下，包含块就是这个元素最近的祖先块元素的内容区，但也不是总是这样。
 
 > 如何确定一个包含块
+
+确定一个元素的包含块的过程完全依赖于这个元素的 position 属性：
 
 1. 如果 position 属性为 static 或 relative ，包含块就是由它的最近的祖先块元素（比如说 inline-block, block 或 list-item 元素）或格式化上下文(比如说 a table container, flex container, grid container, or the block container itself)的内容区的边缘组成的。
 2. 如果 position 属性为 absolute ，包含块就是由它的最近的 position 的值不是 static （也就是值为 fixed, absolute, relative 或 sticky）的祖先元素的内边距区的边缘组成。
 3. 如果 position 属性是 fixed，包含块就是由 viewport (in the case of continuous media) 或是组成的。
-4. 如果 position 属性是 absolute 或 fixed，包含块也可能是由满足以下条件的最近父级元素的内边距区的边缘组成的：
 
 ## 定位
 
@@ -47,23 +50,30 @@
 
 ## 文本
 
-1. 当指定盒子模型的长度的时候，如果内容超出盒子不会换行？
-
 ```css
-.div {
-  word-wrap: break-word;
-}
-```
 
-1. 每个盒子模型都有一个字体基线，子元素的字体会按照这个几线来调整子元素的位置，如果是多行的话会按照最后一行来对齐？
+p{
+  /**
+   * overflow wrap css属性应用于内联元素，设置浏览器是否应在不可断字符串中插入换行符，以防止文本溢出其行框。
+   * */
+  word-wrap:normal|break-word;
+  overflow-wrap:normal|break-word;
 
-```css
-p {
+  /**
+   * 定义当文本超出内容盒子的时候的换行方式
+   * normal 正常模式，该模式下遇到空格符，当内容区不能容下空格符两边的文本的时候，会把后面的文本换行，如果某个文本（不存在空格）超过内容区不会换行
+   * break-all  当超出内容区的时候换行。但是不会1以单词作为换行一句，而是最大限度的排布，所以对于英文而言，有可能会打断某个单词的
+   * keep-all 分词对于中文，日文，韩文，当超过内容区的时候会换行，但是对于英文文本会按照normal方式
+   * break-word 当超出内容区的时候换行。跟break-all唯一的不同就是该模式下会以单词作为换行的依据，不存在单个单词分在两行的情况
+   * */
+  word-break:normal|break-all|keep-all|break-word;
+
+
   /* 小写|大写|首字母大写 */
   text-transform: lowercase|uppercase|capitalize;
   /* 指定元素是否保留文本间的空格、换行；超出边界是否换行
   normal：
-默认处理方式。会将序列的空格合并为一个，内部是否换行由换行规则决定。
+默认处理方式。会将序列的空格合并为一个，内部是否换行由换行规则决定，默认换行符不起作用。
 pre：
 原封不动的保留你输入时的状态，空格、换行都会保留，并且当文字超出边界时不换行。等同 pre 元素效果
 nowrap：
@@ -187,8 +197,48 @@ img {
 
 ### BFC
 
+block-format-context，块级格式化上下文。
+如何生成一个BFC如下：
+
+1. 根元素
+2. 浮动元素
+3. 绝对定位元素（absolute，fixed）
+4. inline-block元素
+5. table-cell元素
+6. overflow不为visible的元素
+7. 弹性元素，网格元素（display的值为flex，grid的元素）
+
+BFC布局规则：
+
+1. 内部的盒子会在垂直方向，一个个地放置；
+2. 盒子垂直方向的距离由margin决定，属于同一个BFC的两个相邻Box的上下margin会发生重叠；
+3. 每个元素的左边，与包含的盒子的左边相接触，即使存在浮动也是如此；
+4. BFC的区域不会与float重叠；
+5. BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素，反之也如此；
+6. 计算BFC的高度时，浮动元素也参与计算。
+
 ### IFC
 
-### FAQ
+inline-format-context，行级格式化上下文。规则如下：
+
+1. 内部的盒子会在水平方向，一个个地放置；
+2. IFC的高度，由里面最高盒子的高度决定？；
+3. 当一行不够放置的时候会自动切换到下一行；
+
+## 特殊属性
+
+```css
+/* 限制文本的行数，需要四个属性一起使用，ie下无效，其他都可以 */
+p{
+    width: 300px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+```
+
+## FAQ
 
 1. transform 为什么对于行内元素不起作用？
+

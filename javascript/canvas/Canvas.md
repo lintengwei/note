@@ -189,6 +189,9 @@ bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
 
 [https://www.jianshu.com/p/0c9b4b681724](https://www.jianshu.com/p/0c9b4b681724)
 
+- 控制点
+  - 是起点和终点之间的点？
+
 二阶贝赛尔曲线，三个顶点ABC，在AB上找出D，在BC上找出E，满足AD/AB=BE/BC ，然后连接DE，在DE上找出点F，满足DF/DE=AD/AB=BE/BC，找出所有的F点，然后连接起来就是二阶贝赛尔曲线，其他更高阶同理，最后降成二阶处理即可。每个转折点成为控制点，还包括起点，结束点
 
 ## 颜色和样式

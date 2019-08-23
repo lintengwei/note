@@ -1,3 +1,18 @@
+- [内置对象](#%e5%86%85%e7%bd%ae%e5%af%b9%e8%b1%a1)
+  - [Object](#object)
+    - [属性描述符](#%e5%b1%9e%e6%80%a7%e6%8f%8f%e8%bf%b0%e7%ac%a6)
+    - [instanceof and isPropertyOf](#instanceof-and-ispropertyof)
+  - [Regexp](#regexp)
+  - [Function](#function)
+  - [Array](#array)
+  - [反射](#%e5%8f%8d%e5%b0%84)
+    - [Proxy 对象](#proxy-%e5%af%b9%e8%b1%a1)
+    - [Reflect 对象](#reflect-%e5%af%b9%e8%b1%a1)
+  - [EventTarget](#eventtarget)
+  - [闭包](#%e9%97%ad%e5%8c%85)
+  - [Map,Set,WeakMap,WeakSet](#mapsetweakmapweakset)
+  - [注意点](#%e6%b3%a8%e6%84%8f%e7%82%b9)
+
 # 内置对象
 
 ## Object
@@ -208,3 +223,67 @@ function expandArray(arr) {
   - 触发事件侦听
     - type
       - 事件类型
+
+## 闭包
+
+函数定义的局部变量被函数之外的对象引用，就会生成闭包
+
+```javascript
+//  example1
+function tt(i){
+  return ()=>console.log(++i)
+}
+
+let aa=tt(2)  //  生成i的闭包
+
+// example2
+function Test(i) {
+  //  因为参数i被原型方法test引用，所有会生成一个闭包，而原型方法被所有实例共享
+  //  当创建最后一个实例的时候复写了该方法，此时闭包的i=3，所以所有实例输出的都是3
+  Test.prototype.test = () => {
+    console.log(i)
+  }
+}
+
+let list = [1, 2, 3].map(ele => {
+  return new Test(ele)
+})
+
+//  输出结果都是3
+list.forEach(ele => {
+  ele.test()
+})
+```
+
+## Map,Set,WeakMap,WeakSet
+
+Map的实现是通过两个内置数组来存放键（可以是任意值）和值的（根据存入的顺序依次放入数组），当赋值和取出的时候都需要遍历整个数组来查找，时间复杂度为O(n)，并且是强引用。所以当键或者值没有在其他地方引用的时候，垃圾回收不会处理Map中的元素，可能会造成内存泄漏。
+
+WeakMap区别于Map的主要是键（只能是对象）和值都是弱引用，当其他地方没有引用的时候，垃圾回收会处理过期的对象，因此存在不稳定，所以键值不能遍历？
+
+## 注意点
+
+1. 关于Array的方法
+
+```javascript
+//  Array.prototype.sort(func:Function)
+//  sort方法如果没有传递参数，则会把所有数组元素先转换为字符串之后根据unicode编码的位置来排序的
+//  如果传递了参数，则会根据函数的返回值来确定元素的顺序，
+//  func(a)-func(b)<0  a在b之前
+//  func(a)-func(b)=0  ab位置不变
+//  func(a)-func(b)>0  a在b之后
+let a=[9,81,5]
+a.sort()  //  [5,81,9]  为传递参数，按照系统默认的
+a.sort((a,b)=>a-b) // [5,9,81]
+```
+
+2. 全局方法
+
+```javascript
+//  parseInt(input,radix)，input输入值，radix进制2-36，默认为10
+//  如果被解析参数的第一个字符无法被转化成数值类型，则返回 NaN
+//  在基数为 undefined，或者基数为 0 或者没有指定的情况下，JavaScript 作如下处理：
+//  1.如果字符串 string 以"0x"或者"0X"开头, 则基数是16 (16进制).
+//  2.如果字符串 string 以"0"开头, 基数是8（八进制）或者10（十进制），那么具体是哪个基数由实现环境决定。ECMAScript 5 规定使用10，但是并不是所有的浏览器都遵循这个规定。因此，永远都要明确给出radix参数的值。
+//  3.如果字符串 string 以其它任何值开头，则基数是10 (十进制)。
+```
