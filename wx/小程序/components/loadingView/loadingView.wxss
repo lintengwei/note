@@ -1,0 +1,97 @@
+
+.circle{
+ display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  font-size: 12px;
+}
+.circle-i{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border:1px solid #9a9a9a;
+  border-left: 1px solid transparent;
+  animation: rotate  .4s linear;
+  animation-iteration-count: infinite;
+  margin-bottom: 8px;
+}
+.loading{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #9a9a9a
+}
+.content{
+  opacity: 0;
+  display: none;
+  position: absolute;
+  width: 100%;
+}
+
+.hide-loading{
+  display: none;
+}
+
+.show-content{
+  animation: show 1s;
+  animation-iteration-count: 1;
+  animation-fill-mode:forwards;
+  display: block;
+}
+
+/* components/empty/empty.wxss */
+.empty-view{
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+.empty-pic{
+  width: 200rpx;
+  height: 200rpx;
+}
+.empty-txt{
+  display: block;
+}
+.btn{
+  color: white;
+  background: #f84846;
+  margin-top: 10px;
+}
+
+@keyframes hide{
+  0%{
+
+  }
+  100%{
+    opacity: 0;
+    height: 0;
+  }
+}
+
+@keyframes show{
+  0%{
+    transform: translateY(60px);
+  }
+  100%{
+    transform: translateY(0);
+    opacity: 1
+  }
+}
+
+@keyframes rotate{
+  0%{
+   
+  }
+  100%{
+    transform: rotate(360deg)
+  }
+}
+

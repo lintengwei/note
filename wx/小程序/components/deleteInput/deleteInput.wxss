@@ -1,0 +1,15 @@
+/* components/deleteInput/deleteInput.wxss */
+@import '../../styles/common.wxss';
+@import '../../styles/iconfont.wxss';
+.d-input{
+  display: flex;
+  background: white;
+  padding: 20rpx;
+  align-items: center;
+  height: 50rpx;
+  line-height: 50rpx;
+  box-sizing: content-box!important
+}
+.input{
+  flex-grow: 1;
+}

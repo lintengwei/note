@@ -1,0 +1,5 @@
+<view class="container {{loaded?'loaded':''}}" style="{{sty}}">
+<!-- ../../assets/placeholder_img.png -->
+  <image bindload='loaded' src="{{startload?url:''}}" class='img'></image>
+  <view class='mask'></view>
+</view>

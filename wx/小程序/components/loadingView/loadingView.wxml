@@ -1,0 +1,16 @@
+<view class='loading-view'>
+  <view class="loading">
+    <view class="circle {{show||showEmpty?'hide-loading':''}}">
+      <view class=" circle-i "></view>
+      <view class="loading-txt ">加载中...</view>
+    </view>
+    <view class='empty-view' wx:if='{{showEmpty}}'>
+      <image class='empty-pic' src='../../assets/empty.png'></image>
+      <text class='empty-txt' decode='{{true}}'>{{text}}</text>
+      <button class='btn' bindtap='buttonClick' wx:if='{{showBtn}}' size='mini'>{{btnText}}</button>
+    </view>
+  </view>
+  <view class="content {{show?'show-content':''}}">
+    <slot></slot>
+  </view>
+</view>

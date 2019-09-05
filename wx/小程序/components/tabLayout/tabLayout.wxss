@@ -1,0 +1,21 @@
+/* components/tabLayout/tabLayout.wxss */
+@import '../../styles/common.wxss';
+.tab-container{
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  height:40px;
+  line-height: 40px;
+}
+
+.tav-item{
+  border-bottom: 2px solid white;
+  flex-grow:1;
+  text-align: center;
+  margin:10rpd 20rpd;
+}
+
+.tav-item.active{
+  border-bottom:  2px solid #f84846;
+  color: #f84846
+}

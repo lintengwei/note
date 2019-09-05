@@ -1,0 +1,3 @@
+<view class='tab-container f14'>
+  <view  wx:for="{{tabList}}" bindtap='changeTab' data-index="{{index}}" wx:key="index" class='tav-item {{currIndex==index?"active":""}}'>{{item}}</view>
+</view>

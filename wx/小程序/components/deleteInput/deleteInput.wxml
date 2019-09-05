@@ -1,0 +1,4 @@
+<view class='d-input'>
+  <input bindfocus='focus' bindinput='textChange' value='{{value}}' type="{{type}}" name="{{name}}" placeholder='{{placeholder}}' bindblur='blur' class='input'></input>
+  <view bindtap='deleteTxt' wx:if="{{show}}" class='ic iconfont icon-close '></view>
+</view>
