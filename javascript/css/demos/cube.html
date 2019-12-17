@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>cube</title>
+  </head>
+  <body>
+    <style>
+      .box {
+        width: 200px;
+        height: 200px;
+        margin: 200px auto;
+        perspective: 400px;
+      }
+      .cube {
+        width: 100%;
+        height: 100%;
+        transition: all 1s;
+        transform-style: preserve-3d;
+      }
+      .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .front {
+        background: red;
+        opacity: 0.6;
+        transform: translateZ(100px);
+      }
+      .back {
+        background: green;
+        opacity: 0.6;
+        transform: rotateY(-180deg) translateZ(100px);
+      }
+
+      .top {
+        background: yellow;
+        opacity: 0.6;
+        transform: rotateX(90deg) translateZ(100px);
+      }
+
+      .bottom {
+        background: orange;
+        opacity: 0.6;
+        transform: rotateX(-90deg) translateZ(100px);
+      }
+      .left {
+        background: blue;
+        opacity: 0.6;
+        transform: rotateY(-90deg) translateZ(100px);
+      }
+      .right {
+        background: pink;
+        opacity: 0.6;
+        transform: rotateY(90deg) translateZ(100px);
+      }
+
+      .cube.cube_top {
+        transform: rotateX(-90deg);
+      }
+      .cube.cube_bottom {
+        transform: rotateX(90deg);
+      }
+      .cube.cube_left {
+        transform: rotateY(90deg);
+      }
+      .cube.cube_right {
+        transform: rotateY(-90deg);
+      }
+      .cube.cube_front {
+        transform: rotateX(0deg);
+      }
+      .cube.cube_back {
+        transform: rotateY(-180deg);
+      }
+    </style>
+    <div class="box">
+      <div class="cube" id="cube">
+        <div class="face front">front</div>
+        <div class="face right">right</div>
+        <div class="face left">left</div>
+        <div class="face bottom">bottom</div>
+        <div class="face top">top</div>
+        <div class="face back">back</div>
+      </div>
+      <form action="" style="margin-top: 200px">
+        <label for="front">front</label
+        ><input id="front" type="radio" value="front" name="face" />
+        <label for="back">back</label
+        ><input type="radio" id="back" name="face" value="back" />
+        <label for="top">top</label
+        ><input type="radio" value="top" name="face" id="top" />
+        <label for="bottom">bottom</label
+        ><input type="radio" name="face" id="bottom" value="bottom" />
+        <label for="left">left</label
+        ><input type="radio" name="face" id="left" value="left" />
+        <label for="right">right</label
+        ><input type="radio" name="face" id="right" value="right" />
+      </form>
+    </div>
+    <script>
+      let check = document.getElementsByName('face')
+      let cube = document.getElementById('cube')
+      let last
+      let len = check.length
+      for (let i = 0; i < len; i++) {
+        check[i].addEventListener('change', e => {
+          let id = e.target.id
+          cube.classList.remove('cube_' + last)
+          cube.classList.add('cube_' + id)
+          last = id
+        })
+      }
+
+      function random() {
+        let i = parseInt(Math.random() * 100)
+        return i
+      }
+
+      setInterval(() => {
+        let num = random()
+        let pre = Math.random() > 0.5 ? 'rotateY' : 'rotateX'
+        let fh = Math.random() > 0.5 ? '-' : ''
+        console.log(`${pre}(${fh}${num}deg)`)
+        cube.style.transform = `${pre}(${fh}${num}deg)`
+      }, 1000)
+    </script>
+  </body>
+</html>

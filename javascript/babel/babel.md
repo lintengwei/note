@@ -1,11 +1,11 @@
 
 
-- [babel 的使用](#babel-%E7%9A%84%E4%BD%BF%E7%94%A8)
-  - [基本使用](#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+- [babel 的使用](#babel-%e7%9a%84%e4%bd%bf%e7%94%a8)
+  - [基本使用](#%e5%9f%ba%e6%9c%ac%e4%bd%bf%e7%94%a8)
     - [plugins](#plugins)
     - [presets](#presets)
-  - [四种配置文件](#%E5%9B%9B%E7%A7%8D%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-    - [属性](#%E5%B1%9E%E6%80%A7)
+  - [四种配置文件](#%e5%9b%9b%e7%a7%8d%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6)
+    - [属性](#%e5%b1%9e%e6%80%a7)
 
 # babel 的使用
 
@@ -112,10 +112,12 @@ module.exports={
 - presets
   - env
   - stage-0
+    - 设想
     - 它包含 stage-1, stage-2 以及 stage-3 的所有功能，同时还另外支持如下两个功能插件：
       - transform-do-expressions
       - transform-function-bind
   - stage-1
+    - 建议
     - 对该功能的正式建议。
     - 包含 stage-2 和 stage-3
     - plugins
@@ -124,12 +126,14 @@ module.exports={
       - transform-decorators
       - transform-export-extensions
   - stage-2
+    - 草案
     - 规范中的第一版。在这一点上，最终可能会将特性包含在标准中。
     - 包含 stage-3
     - plugins
       - syntax-trailing-function-commas
       - transform-object-reset-spread
   - stage-3
+    - 候选
     - 该提案大部分已经完成，现在需要来自实现和用户的反馈才能进一步发展。
     - yarn add preset-stage-3
     - presets:['@bable/preset-stage-3']
@@ -137,6 +141,8 @@ module.exports={
     - plugins
       - transform-async-to-generator
       - transform-exponentiation-operator
+  - stage-4
+    - 完成
   - flow
   - react
     - yarn add @babel/preset-react

@@ -139,11 +139,11 @@ module.exports = {
       chunks: 'all|async|initial',
       //  按需加载是最大的并行请求数目
       maxAsyncRequests: 3,
-      //  入口点耳朵最大请求数量
+      //  入口点最大请求数量
       maxInitialRequests: 3,
-      //  需要共享几次才会单独拆份出来
+      //  最少被几个文件共享才需要提取值
       minChunks: 3,
-      //  要生成块的最小大小（字节）
+      //  包大小的最小值
       minSize: 200000,
       maxSize: 200,
       //  拆分的模块名称
@@ -153,7 +153,7 @@ module.exports = {
       cacheGroups: {
         // 优先级  某个模块可能会被多个缓存组检测到，设置该属性的缓存组值越大，包就会打包进这里
         priority: 10,
-        //  一下两个为缓存组
+        // 以下两个为缓存组
         vendors: {
           //  如果当前块包含已经从主包中分离出来的模块，那么它将被重用，而不是生成新的模块。这可能会影响块的结果文件名。
           reuseExistingChunks: true,

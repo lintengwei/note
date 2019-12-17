@@ -1,16 +1,16 @@
-- [webpack 使用](#webpack-%E4%BD%BF%E7%94%A8)
-  - [疑问](#%E7%96%91%E9%97%AE)
-  - [基本属性](#%E5%9F%BA%E6%9C%AC%E5%B1%9E%E6%80%A7)
-  - [开发环境的配置需求](#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%9A%84%E9%85%8D%E7%BD%AE%E9%9C%80%E6%B1%82)
+- [webpack 使用](#webpack-%e4%bd%bf%e7%94%a8)
+  - [疑问](#%e7%96%91%e9%97%ae)
+  - [基本属性](#%e5%9f%ba%e6%9c%ac%e5%b1%9e%e6%80%a7)
+  - [开发环境的配置需求](#%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83%e7%9a%84%e9%85%8d%e7%bd%ae%e9%9c%80%e6%b1%82)
     - [source-map](#source-map)
-    - [观察模式](#%E8%A7%82%E5%AF%9F%E6%A8%A1%E5%BC%8F)
-    - [热模块替换](#%E7%83%AD%E6%A8%A1%E5%9D%97%E6%9B%BF%E6%8D%A2)
-  - [生产环境配置](#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)
-    - [提取公共文件](#%E6%8F%90%E5%8F%96%E5%85%AC%E5%85%B1%E6%96%87%E4%BB%B6)
-  - [懒加载](#%E6%87%92%E5%8A%A0%E8%BD%BD)
-  - [脚本](#%E8%84%9A%E6%9C%AC)
-  - [番外](#%E7%95%AA%E5%A4%96)
-    - [关于 package.json 中 module 字段的说明](#%E5%85%B3%E4%BA%8E-packagejson-%E4%B8%AD-module-%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AF%B4%E6%98%8E)
+    - [观察模式](#%e8%a7%82%e5%af%9f%e6%a8%a1%e5%bc%8f)
+    - [热模块替换](#%e7%83%ad%e6%a8%a1%e5%9d%97%e6%9b%bf%e6%8d%a2)
+  - [生产环境配置](#%e7%94%9f%e4%ba%a7%e7%8e%af%e5%a2%83%e9%85%8d%e7%bd%ae)
+    - [提取公共文件](#%e6%8f%90%e5%8f%96%e5%85%ac%e5%85%b1%e6%96%87%e4%bb%b6)
+  - [懒加载](#%e6%87%92%e5%8a%a0%e8%bd%bd)
+  - [脚本](#%e8%84%9a%e6%9c%ac)
+  - [番外](#%e7%95%aa%e5%a4%96)
+    - [关于 package.json 中 module 字段的说明](#%e5%85%b3%e4%ba%8e-packagejson-%e4%b8%ad-module-%e5%ad%97%e6%ae%b5%e7%9a%84%e8%af%b4%e6%98%8e)
 
 # webpack 使用
 
@@ -47,13 +47,13 @@ module.exports = {
 
 - String
   - 当只有一个入口文件时候定义为 String
-  - 只会打包成一个ｂｕｎｄｌｅ文件
+  - 只会打包成一个bundle文件
 - Array
   - 当你向 entry 传入一个数组时会发生什么？向 entry 属性传入「文件路径(file path)数组」将创建“多个主入口(multi-main entry)”。在你想要多个依赖文件一起注入，并且将它们的依赖导向(graph)到一个“chunk”时，传入数组的方式就很有用。
-  - 把数组的每个入口都打包成一个ｂｕｎｄｌｅ文件
+  - 把数组的每个入口都打包成一个bundle文件
 - Object
   - 这是应用程序中定义入口的最可扩展的方式。“可扩展的 webpack 配置”是指，可重用并且可以与其他配置组合使用。这是一种流行的技术，用于将关注点(concern)从环境(environment)、构建目标(build target)、运行时(runtime)中分离。然后使用专门的工具（如 webpack-merge）将它们合并。
-  - 每个入口都是一个ｂｕｎｄｌｅ文件
+  - 每个入口都是一个bundle文件
   - 如果是ＳＰＡ项目，一个Ａｐｐ入口和一个依赖入口
   - 如果是多文件项目，每个ｈｔｍｌ对应一个脚本文件
 
