@@ -1,7 +1,6 @@
-- [css基本使用](#css%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
-  - [关于文本](#%E5%85%B3%E4%BA%8E%E6%96%87%E6%9C%AC)
-  - [关于动画](#%E5%85%B3%E4%BA%8E%E5%8A%A8%E7%94%BB)
-  - [关于过渡](#%E5%85%B3%E4%BA%8E%E8%BF%87%E6%B8%A1)
+- [css基本使用](#css%e5%9f%ba%e6%9c%ac%e4%bd%bf%e7%94%a8)
+  - [关于文本](#%e5%85%b3%e4%ba%8e%e6%96%87%e6%9c%ac)
+  - [可替换元素](#%e5%8f%af%e6%9b%bf%e6%8d%a2%e5%85%83%e7%b4%a0)
 
 # css基本使用
 
@@ -35,6 +34,9 @@ p{
    * pre-line：与normal值一致，但是会保留文本输入时的换行。
    * */
   white-space: normal|pre|nowrap|pre-wrap|pre-line;
+
+  /* 设置文本最后一行的对齐方式 兼容性存在问题 */
+  text-align-last:auto|start|end|left|right|justify
 }
 
 /* 限制文本的行数，需要四个属性一起使用，ie下无效，其他都可以 */
@@ -47,6 +49,17 @@ p{
 }
 ```
 
-## 关于动画
+## 可替换元素
 
-## 关于过渡
+```css
+.img{
+  /* object-fit CSS 属性指定可替换元素的内容应该如何适应到其使用的高度和宽度确定的框。
+    fill:拉伸或者压缩以满足元素的大小
+    containe:保持比例压缩以显示全部
+    cover: 会等比例拉伸以填充容器大小，可能会导致部分不可见
+    scale-down:内容的尺寸与 none 或 contain 中的一个相同，取决于它们两个之间谁得到的对象尺寸会更小一些。
+    none:被替换的内容将保持其原有的尺寸
+   */
+  object-fit:contain|cover|fill|scale-down|none
+}
+```

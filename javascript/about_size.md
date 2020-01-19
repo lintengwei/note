@@ -1,0 +1,48 @@
+# 尺寸相关
+
+- clientHeight
+  - content+padding
+- clientWidth
+  - content+padding
+- clientLeft
+  - border-left的值
+- clientTop
+  - border-top
+- offsetHeight
+  - content+padding+border
+- offsetWidth
+  - content+padding+border
+- offsetLeft
+  - 距离定位父元素的左边距，父元素是设置了position的值（relative，fixed，absolute）
+  - 从左边框到父元素左边框的距离
+- scrollHeight
+  - 可滚动的高度
+  - 如果不存在滚动，则值跟client相同，也是 content+padding
+  - 判断是否滚动到底部
+    - ele.scrollHeight-ele.scrollTop === ele.clientHeight
+- scrollWidth
+  - 可滚动的宽度
+- scrollTop
+  - 滚出容器的上边距
+- scrollLeft
+  - 滚出容器的左边距
+- innerWidth
+  - viewport的可视宽度
+- innerHeight
+  - viewport的可视高度
+- outerWidth
+  - 包含全部，按下f12调试模式会不影响，会影响【innerWidth】
+- outerHeight
+  - 包含任务栏
+
+
+- 事件event的坐标
+  - clientX
+    - 相对于视口的X坐标
+  - clientY
+  - offsetX
+    - 相对于事件源的X坐标
+  - offsetY
+  - screenX
+    - 相对于屏幕的X坐标
+  - screenY

@@ -38,10 +38,24 @@
 
 ```javascript
 module.exports = {
+  mode:'development|production|none',
   entry: [string|Array<string>|{[entryChunkName: string]: string|Array<string>}],
   output:Object<{filename:'',path:''}>
 };
 ```
+
+> mode
+
+打包模式。设置webpack的打包模式，可选值有三个（'development','production','none'），更多查看文件 【options.mode.md】
+
+- production 
+  - 生产打包模式，webpack会使用内置的一些优化，如压缩代码、未被使用的代码不会打包，替换字符串常量等操作
+  - 会将 process.env.NODE_ENV 的值设为 production。启用 FlagDependencyUsagePlugin, FlagIncludedChunksPlugin, ModuleConcatenationPlugin, NoEmitOnErrorsPlugin, OccurrenceOrderPlugin, SideEffectsFlagPlugin 和 UglifyJsPlugin.
+- development
+  - 开发模式的打包
+  - 会将 process.env.NODE_ENV 的值设为 development。启用 NamedChunksPlugin 和 NamedModulesPlugin。
+- none
+  - 不做任何处理的打包，就单纯的打包模块
 
 > entry. 如果传入一个字符串或字符串数组，chunk 会被命名为 main
 
@@ -205,7 +219,7 @@ module.exports = {
 }
 ```
 
-如果按以上配置，当运行开发环境的时候，会生成虚拟目录，如下：
+如果按以上配置，当运行开发环境的时候，会生成虚拟目录！。如下：
 
 - /
   - index.html
@@ -216,6 +230,7 @@ module.exports = {
   devServer: {
     //  告诉服务器从哪个目录中提供内容。只有在你想要提供静态文件时才需要
     //  加载html等静态文件，如果是动态文件则指定 publicPath？
+    //  如果未指定该值，则以命令行运行所在目录为根目录
     contentBase: String | Boolean|Array<String>,
     //  当静态文件修改的时候是否刷新页面
     watchContentBase: Boolean,
@@ -231,10 +246,25 @@ module.exports = {
     port: Number,
     //  是否开启热更新
     hot: Boolean,
-
     hotOnly: Boolean,
+
     //  配置代理服务器
-    proxy:Object
+    //  使用的是库【http-proxy-middleware】
+    proxy:Object,
+
+    // 是否打开指定的页面，值为字符串，页面的路径，不以【/】开头
+    openPage:String,
+
+    //  控制
+    after(){
+
+    },
+    before(app){
+      //  可以控制请求
+      app.get('/',(req,res)=>{
+        //  需要自行处理，否则会一直挂起
+      })
+    }
   }
 }
 ```
