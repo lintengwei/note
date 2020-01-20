@@ -10,6 +10,8 @@
 # babel 的使用
 
 [https://babel.docschina.org/docs/en/](https://babel.docschina.org/docs/en/)
+[https://juejin.im/post/5ddff3abe51d4502d56bd143](https://juejin.im/post/5ddff3abe51d4502d56bd143)
+[https://www.jianshu.com/p/cbd48919a0cc](https://www.jianshu.com/p/cbd48919a0cc)
 [使用细节](https://blog.csdn.net/maquealone/article/details/79575163)
 
 ## 基本使用
